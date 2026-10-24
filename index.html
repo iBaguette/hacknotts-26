@@ -157,7 +157,8 @@
             );
         }
 
-        var lastFrameMovement = [0, 0];
+        var lastFrameMovementX = 0;
+        var lastFrameMovementY = 0;
 
         var pressedKeys = {};
         window.onkeyup = function (e) { pressedKeys[e.keyCode] = false; }
@@ -189,8 +190,8 @@
 
 
             const deadzone = 0.25;
-            lastFrameMovement[0] = horizontal;
-            lastFrameMovement[1] = vertical;
+            lastFrameMovementX = horizontal;
+            lastFrameMovementY = vertical;
 
             if (Math.abs(horizontal) > deadzone) {
                 x += horizontal * speed;
@@ -204,21 +205,26 @@
         }
 
 
-        function drawSprite(sheet, spriteIndex, xD, yD, scale, size=16) {
-            let columns = Math.floor(sheet.width / size);
-            if (columns <= 0) columns = 0;
 
-            // Convert single index into x and y on the sprite sheet
+        function drawSprite(sheet, spriteIndex, xD, yD, scale, size = 16, flipX = false) {
+            const ctx = myGameArea.context;
+            const columns = Math.floor(sheet.width / size);
+
             const sX = (spriteIndex % columns) * size;
             const sY = Math.floor(spriteIndex / columns) * size;
 
-            // Draw 
-            ctx = myGameArea.context;
+            ctx.save();
+
+            ctx.translate(xD + (flipX ? scale : 0), yD);
+            ctx.scale(flipX ? -1 : 1, 1);
+
             ctx.drawImage(
                 sheet,
-                sX, sY, size, size, // Source - where to crop from the sheet
-                xD, yD, scale, scale // Destination - where to draw it
+                sX, sY, size, size,
+                0, 0, scale, scale
             );
+
+            ctx.restore();
         }
 
         const canvas = myGameArea.canvas;
@@ -267,6 +273,7 @@
 
         walkingState = 0;
         count = 0;
+        isFacingUp = false;
 
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
@@ -295,21 +302,40 @@
                 if (entity.category === CharacterType.Player) {
                     drawSprite(
                         myBackground.playerSpriteSheet,
-                        walkingState, // sprite index
+                        walkingState,
                         entity.position_x - this.x,
                         entity.position_y,
-                        96,
-                        32
+                        64,
+                        32,
+                        lastFrameMovementX > 0
                     );
                 } else {
                     drawBasicEntityRect(entity);
                 }
             }
 
-            if (count++ > 10) {
+            // loops
+            if (lastFrameMovementX == 0 && lastFrameMovementY == 0) {
                 count = 0;
-                walkingState = (walkingState + 1) % 3;
+                (isFacingUp) ? walkingState = 4 : walkingState = 1;
+            } else {
+                isFacingUp = false; 
+                if (lastFrameMovementY == 1) {
+                    // from 3-5
+                    walkingState = 3 + Math.floor(count / 5) % 3;
+                    isFacingUp = true;
+                } else if (lastFrameMovementY == -1) {
+                    // from 0-2
+                    walkingState = Math.floor(count / 5) % 3;
+                } else if (lastFrameMovementX == 1) {
+                    // from 6-8
+                    walkingState = 6 + Math.floor(count / 5) % 3;
+                } else if (lastFrameMovementX == -1) {
+                    // from 6-8
+                    walkingState = 6 + Math.floor(count / 5) % 3;
+                }
             }
+            count += 1;
 
             handleJoystick();
         }
@@ -331,7 +357,6 @@
             Obstacle: "obstacle",
         }
 
-        var entities = [];
         var current_entity_id = 0;
         function spawnEntity(category = CharacterType.Item, size_x, size_y, colour, position_x, position_y, collidable = true) {
             // Player must be singleton
@@ -348,7 +373,7 @@
             const constructed_character = {
                 id: current_entity_id++,
                 category: category,
-                size_x: size_x,
+                size_x: size_x, 
                 size_y: size_y,
                 colour: colour,
                 position_x: position_x,
