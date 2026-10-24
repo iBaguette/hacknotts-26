@@ -84,6 +84,7 @@
             "r1":     { "pos": 267, "collidable": false,  "interactable": false },
             "r2":     { "pos": 268, "collidable": false,  "interactable": false },
             "r3":     { "pos": 269, "collidable": false,  "interactable": false },
+            "oob":     { "pos": 322,   "collidable": true,  "interactable": false }
         };
 
 
@@ -136,6 +137,8 @@
 
 
         const patterns = {
+            oob: [[t.oob]],
+
             floor: [[t.p1, t.p2]],
 
             window_left_join: [
@@ -172,6 +175,9 @@
         };
 
         // ---- COnstruct LEVEL ---- //
+
+        // hidden out of bounds big vertical area:
+        paint(1, 1, 1, 4, patterns.oob);
 
         // bottom section:
         paint(0, 14, 36, 1, patterns.border);
@@ -300,6 +306,11 @@
             // console.log("X:", x, "Y:", y);
         }
 
+        function blitText(ctx, text, x, y, font = "16px Arial", color = "black") {
+            ctx.font = font;
+            ctx.fillStyle = color;
+            ctx.fillText(text, x, y);
+        }
 
 
         function drawSprite(sheet, spriteIndex, xD, yD, scale, size = 16, flipX = false) {
@@ -397,7 +408,7 @@
                         walkingState,
                         entity.position_x - this.x,
                         entity.position_y,
-                        64,
+                        64*1.5,
                         32,
                         lastFrameMovementX > 0
                     );
@@ -424,7 +435,7 @@
                         entity.frame + fOffset,
                         entity.position_x,
                         entity.position_y + this.y,
-                        64,
+                        64*1.5,
                         32,
                         flipX
                     );
@@ -491,9 +502,9 @@
                     }
                 }
             }
-
             return false;
         }
+        
 
         // Manage all characters/entities in the world rn
         /**
@@ -508,7 +519,8 @@
         }
 
         var current_entity_id = 0;
-        function spawnEntity(category = CharacterType.Item, size_x, size_y, colour = "red", position_x, position_y, collidable = true, patrol_x = 0, patrol_y = 0) {
+
+        function spawnEntity(category = CharacterType.Item, size_x, size_y, colour = "red", position_x, position_y, collidable = true, patrol_x = 0, patrol_y = 0, interactable = false, interactableText = "") {
             // Player must be singleton
             if (category === CharacterType.Player) {
                 if (player_piece !== undefined) {
@@ -549,7 +561,9 @@
                 collidable: collidable,
                 frame: 0,
                 counter: 0,
-                direction: "left"
+                direction: "left",
+                interactable: interactable,
+                interactableText: interactableText
             };
 
             entities.push(constructed_character);
@@ -576,8 +590,8 @@
             spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width - 30) / 2, (canvas.height - 30) / 2);
 
             // Create the other stuff
-            spawnEntity(CharacterType.Enemy, 50, 80, "red", 1, 1, false, 2, 1);
-            // spawnEntity(CharacterType.Enemy, 50, 80, "red", position_x = 500, position_y = 500, patrol_x = 100, patrol_y = 100);
+            // spawnEntity(CharacterType.Enemy, 50, 80, "red", 1, 1, false, 2, 1);
+            spawnEntity(CharacterType.NPC, 30, 30, "blue", 100, 100, false, 0, 0, true);
             // spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
 
