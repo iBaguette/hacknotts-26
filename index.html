@@ -85,9 +85,13 @@
             [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
         ];
 
+        /**
+         * BUILD AND START ALL LOGIC HERE
+         */
         function startGame() {
             myGameArea.start();
             myBackground = new background(480, 270);
+            initialiseInitialCharacters();
         }
 
 
@@ -118,8 +122,8 @@
             );
         }
         var pressedKeys = {};
-        window.onkeyup = function(e) { pressedKeys[e.keyCode] = false; }
-        window.onkeydown = function(e) { pressedKeys[e.keyCode] = true; }
+        window.onkeyup = function (e) { pressedKeys[e.keyCode] = false; }
+        window.onkeydown = function (e) { pressedKeys[e.keyCode] = true; }
 
         function handleJoystick() {
             const gamepads = navigator.getGamepads();
@@ -236,7 +240,7 @@
 
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
-            
+
             myGameArea.clear();
             myGameArea.frameNo += 1;
             if (myGameArea.frameNo == 1 || everyinterval(150)) {
@@ -248,14 +252,14 @@
                 maxGap = 200;
                 gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
             }
-            
+
             doEntityMovementCalcs();
             for (i = 0; i < entities.length; i += 1) {
                 entities[i].x += -1;
             }
 
             myBackground.draw();
-            
+
             for (const entity of entities) {
                 drawEntity(entity);
             }
@@ -328,14 +332,13 @@
         function initialiseInitialCharacters() {
             // Create the player
             console.log(`Spawning player at ${canvas.width}`);
-            spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width / 2), (canvas.height / 2));
+            spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width - 30) / 2, (canvas.height - 30) / 2);
             // spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width*3), (canvas.height*3));
 
             // Create the other stuff
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 0, 150);
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
-        initialiseInitialCharacters();
 
         function doEntityMovementCalcs() {
             for (const entity of entities) {
@@ -344,7 +347,7 @@
                 }
             }
         }
-        
+
     </script>
     <br>
 </body>
