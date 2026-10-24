@@ -177,10 +177,17 @@
 
         window.addEventListener('keydown', (event) => {
             if (event.key === 'w' || event.key === 'W') {
-                console.log('The S key was pressed!');
+                console.log('The w key was pressed!');
                 accelerate(-0.2)
             }
-            });
+        });
+
+        window.addEventListener("keyup", (event) => {
+            if (event.key === 's' || event.key === 's') {
+                console.log('The S key was pressed!');
+                accelerate(0.2)
+            }
+        });
     </script>
     <br>
 </body>
