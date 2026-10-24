@@ -42,11 +42,21 @@
         // Background is 139
         // StartTile is the index in the map that should be the tile at 0, 0 at the start of the game
         // The start tile is drawn in the middle of the screen initially
+
+        const t = {
+            "cracked": 139,
+            "slid": 120,
+            "blacc": 111
+        }
+
         const startTileX = 1;
         const startTileY = 0;
         const map = [
-            [139, 138, 137],
-            [139, 120]
+            [t.cracked, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid],
+            [t.cracked, t.slid, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.slid],
+            [t.cracked, t.slid, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.slid],
+            [t.cracked, t.slid, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.slid],
+            [t.cracked, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid],
         ];
 
         function startGame() {
@@ -92,7 +102,7 @@
         function background(width, height) {
             const scale = 32;
             this.backSheet = new Image();
-            this.backSheet.src = "neo_zero_tiles_and_buildings_01.png";
+            this.backSheet.src = "assets/neo_zero_tiles_and_buildings_01.png";
             this.loaded = false;
             this.backSheet.onload = () => {
                 this.loaded = true;
@@ -134,22 +144,18 @@
             this.score = 0;
             this.width = width;
             this.height = height;
-            this.speedX = 0;
-            this.speedY = 0;
             this.x = x;
             this.y = y;
-            this.gravity = 0;
-            this.gravitySpeed = 0;
             this.update = function () {
                 ctx = myGameArea.context;
                 // Draw background
                 this.background.draw()
 
-                // Draw player and text
+                // Draw different types of stuff
                 if (this.type == "text") {
-                    ctx.font = this.width + " " + this.height;
-                    ctx.fillStyle = color;
-                    ctx.fillText(this.text, this.x, this.y);
+                    // ctx.font = this.width + " " + this.height;
+                    // ctx.fillStyle = color;
+                    // ctx.fillText(this.text, this.x, this.y);
                 } else {
                     ctx.fillStyle = color;
                     ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -268,8 +274,6 @@
             if (category === CharacterType.Player) {
                 console.log("Assigned player piece");
                 player_piece = constructed_character;
-            } else {
-                console.log("chars");
             }
 
             console.log(`Created entity #${current_entity_id}`);
