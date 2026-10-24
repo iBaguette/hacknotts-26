@@ -55,31 +55,31 @@
         // The start tile is drawn in the middle of the screen initially
 
         const t = {
-            "b": 68,
-            "b2": 69,
-            "p1": 123,
-            "p2": 124,
-            "p3": 140,
-            "p4": 141,
-            "win11": 255,
-            "win12": 256,
-            "win13": 257,
-            "win14": 272,
-            "win15": 273,
-            "win16": 274,
-            "win21": 261,
-            "win22": 262,
-            "win23": 263,
-            "win24": 278,
-            "win25": 279,
-            "win26": 280,
-            "mat1": 126,
-            "mat2": 127,
-            "mat3": 128,
-            "cracked": 139,
-            "slid": 120,
-            "blacc": 111
-        }
+            "b":       { "pos": 68,  "collidable": false, "interactable": false },
+            "b2":      { "pos": 69,  "collidable": false, "interactable": false },
+            "p1":      { "pos": 123, "collidable": false, "interactable": false },
+            "p2":      { "pos": 124, "collidable": false, "interactable": false },
+            "p3":      { "pos": 140, "collidable": false, "interactable": false },
+            "p4":      { "pos": 141, "collidable": false, "interactable": false },
+            "win11":   { "pos": 255, "collidable": true, "interactable": false },
+            "win12":   { "pos": 256, "collidable": true, "interactable": false },
+            "win13":   { "pos": 257, "collidable": true, "interactable": false },
+            "win14":   { "pos": 272, "collidable": true, "interactable": false },
+            "win15":   { "pos": 273, "collidable": true, "interactable": false },
+            "win16":   { "pos": 274, "collidable": true, "interactable": false },
+            "win21":   { "pos": 261, "collidable": true, "interactable": false },
+            "win22":   { "pos": 262, "collidable": true, "interactable": false },
+            "win23":   { "pos": 263, "collidable": true, "interactable": false },
+            "win24":   { "pos": 278, "collidable": true, "interactable": false },
+            "win25":   { "pos": 279, "collidable": true, "interactable": false },
+            "win26":   { "pos": 280, "collidable": true, "interactable": false },
+            "mat1":    { "pos": 126, "collidable": false, "interactable": false },
+            "mat2":    { "pos": 127, "collidable": false, "interactable": false },
+            "mat3":    { "pos": 128, "collidable": false, "interactable": false },
+            "cracked": { "pos": 139, "collidable": false, "interactable": false },
+            "slid":    { "pos": 120, "collidable": false, "interactable": false },
+            "blacc":   { "pos": 111, "collidable": false, "interactable": false }
+        };
 
 
         const playerSpriteSheet = {
@@ -191,8 +191,16 @@
                 vertical = joystick.axes[1];
             };
 
+            entity = getPlayer();
 
-            const deadzone = 0.25;
+            if (checkMapCollision(entity, entity.position_x + lastFrameMovementX * speed, entity.position_y + lastFrameMovementY * speed)) {
+                horizontal = 0;
+                vertical = 0;
+                console.log("Collision detected, stopping movement");
+                return;
+            }
+
+
             lastFrameMovementX = horizontal;
             lastFrameMovementY = vertical;
 
@@ -257,7 +265,7 @@
                 // Draw each tile in the map
                 for (let row = 0; row < map.length; row++) {
                     for (let col = 0; col < map[row].length; col++) {
-                        const spriteIndex = map[row][col];
+                        const spriteIndex = map[row][col].pos;
 
                         const screenX = startScreenX + (col - startTileX) * scale;
                         const screenY = startScreenY + (row - startTileY) * scale;
@@ -330,12 +338,41 @@
             }
             count += 1;
 
-            handleJoystick();
+            handleInput();
         }
 
         function everyinterval(n) {
             if ((myGameArea.frameNo / n) % 1 == 0) { return true; }
             return false;
+        }
+
+        /**
+         * if the new position calc'd would collide with something that shouldnt be collided with,
+         */
+        function checkMapCollision(entity, newX, newY) {
+            for (let row = 0; row < map.length; row++) {
+                for (let col = 0; col < map[row].length; col++) {
+                    const spriteIndex = map[row][col].pos;
+
+                    const screenX = canvas.width / 2 - 32 / 2; + (col - startTileX) * 32;
+                    const screenY = canvas.width / 2 - 32 / 2; + (row - startTileY) * 32;   
+
+                    if (map[row][col].collidable) {
+                        if (
+                            newX < screenX + 32 &&
+                            newX + entity.size_x > screenX &&
+                            newY < screenY + 32 &&
+                            newY + entity.size_y > screenY
+                        ) {
+                            console.log(`Collision detected with tile at (${col}, ${row})`);
+                            return true; // Collision detected
+                        } else {
+                            // console.log(`No collision with tile at (${col}, ${row})`);
+                        }
+                    }
+                }
+            }
+
         }
 
 
