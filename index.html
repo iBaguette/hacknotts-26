@@ -177,8 +177,6 @@
                 minGap = 50;
                 maxGap = 200;
                 gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
-                myObstacles.push(new component(10, height, "green", x, 0));
-                myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
             }
             for (i = 0; i < myObstacles.length; i += 1) {
                 myObstacles[i].x += -1;
@@ -187,8 +185,10 @@
             myScore.text = "SCORE: " + myGameArea.frameNo;
             myScore.update();
             
-            player_piece.component.newPos();
-            player_piece.component.update();
+            for (var entity in myObstacles) {
+                entity.component.newPos();
+                entity.component.update();
+            }
         }
 
         function everyinterval(n) {
@@ -230,8 +230,6 @@
                 size_x: size_x,
                 size_y: size_y,
                 colour: colour,
-                position_x: position_x,
-                position_y: position_y,
                 collidable: collidable
             };
 
@@ -246,6 +244,8 @@
                 console.log("chars");
             }
 
+            console.log(`Created entity #${current_entity_id}`);
+            console.log(constructed_character);
             return new_char;
         }
 
@@ -258,7 +258,7 @@
             spawnEntity(CharacterType.Player, 30, 30, "green", 10, 120);
 
             // Create the other stuff
-            spawnEntity(CharacterType.Enemy, 20, 20, "red", 100, 500);
+            spawnEntity(CharacterType.Enemy, 20, 20, "red", 40, 150);
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
         createInitialCharacters();
