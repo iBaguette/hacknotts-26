@@ -4,14 +4,32 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-        canvas {
-            border: 1px solid #d3d3d3;
-            background-color: #f1f1f1;
-        }
+    body, html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #111;
+        height: 100%;
+    }
+
+    canvas {
+        border: 1px solid #d3d3d3;
+        background-color: #f1f1f1;
+        
+        display: block;   
+        max-width: 100vw;  
+        max-height: 100vh;
+        width: 100vw;
+        height: auto;
+        
+        margin: 0 auto;
+    }
+
     </style>
 </head>
 
 <body onload="startGame()">
+
     <script>
 
         var myGamePiece;
@@ -32,8 +50,6 @@
         var myGameArea = {
             canvas: document.createElement("canvas"),
             start: function () {
-                this.canvas.width = 1920;
-                this.canvas.height = 1080;
                 this.context = this.canvas.getContext("2d");
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.frameNo = 0;
@@ -46,33 +62,44 @@
 
 
 
-        function drawSprite(sheet, frameIndex, frameSize) {
-            this.size = 16;
-            
-            ctx.drawImage(sprite, 0, tileIndex * spriteSize, spriteSize, spriteSize, tileX, tileY, spriteSize, spriteSize);
+        function drawSprite(sheet, spriteIndex, x, y) {
+            const size = 16;
+            let columns = Math.floor(sheet.width / size);
+            if (columns <= 0) columns = 0;
 
+            // Convert single index into x and y on the sprite sheet
+            const sX = (spriteIndex % columns) * size;
+            const sY = Math.floor(spriteIndex / columns) * size;
+
+            // Draw 
+            ctx = myGameArea.context;
+            ctx.drawImage(
+                sheet,
+                sX, sY, size, size, // Source - where to crop from the sheet
+                x, y, 64, 64    // Destination - where to draw it
+            );
         }
-
 
         function background(width, height) {
 
             this.backSheet = new Image();
             this.backSheet.src = "neo_zero_tiles_and_buildings_01.png";
+            this.loaded = false;
             this.backSheet.onload = () => {
-                this.background = splitSheet(this.backSheet, 0, 16, 16);
-
-                context.drawImage(image, x * widthOfOnePiece, y * heightOfOnePiece, widthOfOnePiece, heightOfOnePiece, 0, 0, canvas.width, canvas.height);
-
-
+                this.loaded = true;
             }
 
             this.draw = function () {
-                ctx = myGameArea.context;
-                ctx.fillRect(10, 10, 10, 10);
-
-                ctx.drawImage(this.backSheet);
-
-
+                if (this.loaded) {
+                    
+                    drawSprite(this.backSheet, 12, 10, 10);
+                    // ctx.drawImage(this.backSheet, 10, 10);
+                    // ctx.drawImage(
+                    //     this.backSheet,
+                    //     0, 0, 160, 160,  // Source rectangle
+                    //     10, 10, 64, 64 // Destination rectangle, enlarged 4x
+                    // );
+                }
             }
 
         }
