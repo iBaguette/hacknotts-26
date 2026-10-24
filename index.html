@@ -259,7 +259,8 @@
         function initialiseInitialCharacters() {
             // Create the player
             console.log(`Spawning player at ${canvas.width}`);
-            spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width*3), (canvas.height*3));
+            spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width / 2), (canvas.height / 2));
+            // spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width*3), (canvas.height*3));
 
             // Create the other stuff
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 0, 150);
