@@ -112,6 +112,8 @@
             );
         }
 
+        const canvas = myGameArea.canvas;
+
         function background(width, height) {
             const scale = 32;
             this.backSheet = new Image();
@@ -121,11 +123,15 @@
                 this.loaded = true;
             }
 
+            this.playerSpriteSheet = new Image();
+            this.playerSpriteSheet.src = "assets/neo_zero_char_01.png";
+            this.loaded = false;
+            this.playerSpriteSheet.onload = () => {
+                this.loaded = true;
+            }
+
             this.draw = function () {
                 if (!this.loaded) return;
-
-                const canvas = myGameArea.canvas;
-
                 // Centre the starting tile on the canvas
                 const startScreenX = canvas.width / 2 - scale / 2;
                 const startScreenY = canvas.height / 2 - scale / 2;
@@ -147,18 +153,24 @@
                         );
                     }
                 }
-            };
 
+                // Draw the player in the middle of the screen
+                const player = getPlayer();
+                if (player) {
+                    drawSprite(
+                        this.playerSpriteSheet,
+                        player.spriteIndex,
+                        startScreenX,
+                        startScreenY,
+                        scale
+                    );
+                }
+            };
         }
 
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
-            // console.log(myObstacles.length)
-            // for (i = 0; i < myObstacles.length; i += 1) {
-            //     if (player_piece.crashWith(myObstacles[i].component)) {
-            //         return;
-            //     }
-            // }
+            
             myGameArea.clear();
             myGameArea.frameNo += 1;
             if (myGameArea.frameNo == 1 || everyinterval(150)) {
@@ -170,16 +182,18 @@
                 maxGap = 200;
                 gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
             }
-            updateEntities();
+            
+            doEntityMovementCalcs();
             for (i = 0; i < entities.length; i += 1) {
                 entities[i].x += -1;
             }
+
+            myBackground.draw();
             
             for (const entity of entities) {
                 drawEntity(entity);
             }
 
-            myBackground.draw();
         }
 
         function everyinterval(n) {
@@ -209,7 +223,7 @@
                     return;
                 }
             }
-
+            console.log(`Spawning entity of type ${category} at (${position_x}, ${position_y})`);
             // else create the new
             // let new_char = new component(size_x, size_y, colour, position_x, position_y);
 
@@ -242,34 +256,24 @@
             return entities.find(entity => entity.category === CharacterType.Player);
         }
 
-        function createInitialCharacters() {
+        function initialiseInitialCharacters() {
             // Create the player
-            spawnEntity(CharacterType.Player, 30, 30, "green", 10, 120);
+            console.log(`Spawning player at ${canvas.width}`);
+            spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width*3), (canvas.height*3));
 
             // Create the other stuff
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 0, 150);
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
-        createInitialCharacters();
+        initialiseInitialCharacters();
 
-        function updateEntities() {
+        function doEntityMovementCalcs() {
             for (const entity of entities) {
                 if (entity.category === CharacterType.Enemy) {
                     entity.position_x += direction_to_move;
                 }
             }
         }
-
-
-        (async () => {
-            while (true) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                direction_to_move = -1;
-
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                direction_to_move = 1;
-            }
-        })();
         
     </script>
     <br>
