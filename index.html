@@ -73,6 +73,32 @@
             "blacc": 111
         }
 
+
+        const playerSpriteSheet = {
+            "image": new Image("assets/neo_zero_char_01.png"),
+            "sprite_dimensions": 32,
+            "map": {
+                "red_forward_left": [0, 0],
+                "red_forward_middle": [0, 1],
+                "red_forward_right": [0, 2],
+                "red_back_left": [1, 0],
+                "red_back_middle": [1, 1],
+                "red_back_right": [1, 2],
+                "red_right_left": [2, 0],
+                "red_right_middle": [2, 1],
+                "red_right_right": [2, 2],
+                "cyborg_forward_left": [3, 0],
+                "cyborg_forward_middle": [3, 1],
+                "cyborg_forward_right": [3, 2],
+                "cyborg_back_left": [4, 0],
+                "cyborg_back_middle": [4, 1],
+                "cyborg_back_right": [4, 2],
+                "cyborg_right_left": [5, 0],
+                "cyborg_right_middle": [5, 1],
+                "cyborg_right_right": [5, 2],
+            }
+        }
+
         const startTileX = 5;
         const startTileY = 2;
         const map = [
@@ -110,7 +136,7 @@
             }
         }
 
-        function drawEntity(entity) {
+        function drawBasicEntityRect(entity) {
             const ctx = myGameArea.context;
 
             ctx.fillStyle = entity.colour;
@@ -121,6 +147,9 @@
                 entity.size_y
             );
         }
+
+        var lastFrameMovement = [0, 0];
+
         var pressedKeys = {};
         window.onkeyup = function (e) { pressedKeys[e.keyCode] = false; }
         window.onkeydown = function (e) { pressedKeys[e.keyCode] = true; }
@@ -151,6 +180,8 @@
 
 
             const deadzone = 0.25;
+            lastFrameMovement[0] = horizontal;
+            lastFrameMovement[1] = vertical;
 
             if (Math.abs(horizontal) > deadzone) {
                 x += horizontal * speed;
@@ -222,18 +253,6 @@
                         );
                     }
                 }
-
-                // Draw the player in the middle of the screen
-                const player = getPlayer();
-                if (player) {
-                    drawSprite(
-                        this.playerSpriteSheet,
-                        player.spriteIndex,
-                        startScreenX,
-                        startScreenY,
-                        scale
-                    );
-                }
             };
         }
 
@@ -260,10 +279,20 @@
             myBackground.draw();
 
             for (const entity of entities) {
-                drawEntity(entity);
+
+                if (entity.category === CharacterType.Player) {
+                    drawSprite(
+                        myBackground.playerSpriteSheet,
+                        walkingState, // sprite index
+                        entity.position_x,
+                        entity.position_y,
+                        96,
+                        32
+                    );
+                } else {
+                    drawBasicEntityRect(entity);
+                }
             }
-
-
 
             handleJoystick();
         }
