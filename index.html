@@ -15,7 +15,7 @@
 
         canvas {
             border: 1px solid #d3d3d3;
-            background-color: #f1f1f1;
+            background-color: #5881c0;
 
             display: block;
             max-width: 100vw;
@@ -46,6 +46,27 @@
         // The start tile is drawn in the middle of the screen initially
 
         const t = {
+            "b": 68,
+            "b2": 69,
+            "p1": 123,
+            "p2": 124,
+            "p3": 140,
+            "p4": 141,
+            "win11": 255,
+            "win12": 256,
+            "win13": 257,
+            "win14": 272,
+            "win15": 273,
+            "win16": 274,
+            "win21": 261,
+            "win22": 262,
+            "win23": 263,
+            "win24": 278,
+            "win25": 279,
+            "win26": 280,
+            "mat1": 126,
+            "mat2": 127,
+            "mat3": 128,
             "cracked": 139,
             "slid": 120,
             "blacc": 111
@@ -54,11 +75,13 @@
         const startTileX = 5;
         const startTileY = 2;
         const map = [
-            [t.cracked, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid],
-            [t.cracked, t.slid, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.slid],
-            [t.cracked, t.slid, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.slid],
-            [t.cracked, t.slid, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.slid],
-            [t.cracked, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid],
+            [t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b],
+            [t.win11, t.win12, t.win13, t.win11, t.win12, t.win13, t.b, t.b, t.b, t.win21, t.win22, t.win23,],
+            [t.win14, t.win15, t.win16, t.win14, t.win15, t.win16, t.mat1, t.mat2, t.mat3, t.win24, t.win25, t.win26,],
+            [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
+            [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
+            [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
+            [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
         ];
 
         function startGame() {
@@ -155,7 +178,7 @@
         }
 
         function background(width, height) {
-            const scale = 32;
+            const scale = 64;
             this.backSheet = new Image();
             this.backSheet.src = "assets/neo_zero_tiles_and_buildings_01.png";
             this.loaded = false;
@@ -219,6 +242,11 @@
             for (const entity of entities) {
                 drawEntity(entity);
             }
+            
+            myBackground.draw();
+
+
+            handleJoystick();
         }
 
         function everyinterval(n) {
@@ -290,6 +318,12 @@
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
         createInitialCharacters();
+        
+
+
+
+
+
     </script>
     <br>
 </body>
