@@ -4,27 +4,27 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-    body, html {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background-color: #111;
-        height: 100%;
-    }
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #111;
+            height: 100%;
+        }
 
-    canvas {
-        border: 1px solid #d3d3d3;
-        background-color: #f1f1f1;
-        
-        display: block;   
-        max-width: 100vw;  
-        max-height: 100vh;
-        width: 100vw;
-        height: auto;
-        
-        margin: 0 auto;
-    }
+        canvas {
+            border: 1px solid #d3d3d3;
+            background-color: #f1f1f1;
 
+            display: block;
+            max-width: 100vw;
+            max-height: 100vh;
+            width: 100vw;
+            height: auto;
+
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -39,7 +39,7 @@
         function startGame() {
             myScore = new component("30px", "Consolas", "black", 280, 40, "text");
             myGameArea.start();
-            
+
         }
 
 
@@ -87,7 +87,7 @@
 
             this.draw = function () {
                 if (this.loaded) {
-                    
+
                     drawSprite(this.backSheet, 12, 10, 10);
                     // ctx.drawImage(this.backSheet, 10, 10);
                     // ctx.drawImage(
@@ -116,7 +116,7 @@
                 ctx = myGameArea.context;
                 // Draw background
                 this.background.draw()
-                
+
                 // Draw player and text
                 if (this.type == "text") {
                     ctx.font = this.width + " " + this.height;
@@ -186,8 +186,9 @@
             }
             myScore.text = "SCORE: " + myGameArea.frameNo;
             myScore.update();
-            // player_piece.newPos();
-            // player_piece.update();
+            
+            player_piece.component.newPos();
+            player_piece.component.update();
         }
 
         function everyinterval(n) {
@@ -235,7 +236,15 @@
             };
 
             entities.push(constructed_character);
-            console.log(`Spawned new character with id: ${current_entity_id}`);
+            // console.lwog(`Spawned new character with id: ${current_entity_id}`);
+
+            // set singleton 
+            if (category === CharacterType.Player) {
+                console.log("Assigned player piece");
+                player_piece = constructed_character;
+            } else {
+                console.log("chars");
+            }
 
             return new_char;
         }
@@ -252,6 +261,7 @@
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 100, 500);
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
+        createInitialCharacters();
     </script>
     <br>
 </body>
