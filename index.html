@@ -152,7 +152,7 @@
             ctx.fillStyle = entity.colour;
             ctx.fillRect(
                 entity.position_x,
-                entity.position_y,
+                entity.position_y + y,
                 entity.size_x,
                 entity.size_y
             );
@@ -229,9 +229,9 @@
         }
 
         const canvas = myGameArea.canvas;
+        const scale = 64;
 
         function background(width, height) {
-            const scale = 64;
             this.backSheet = new Image();
             this.backSheet.src = "assets/neo_zero_tiles_and_buildings_01.png";
             this.loaded = false;
@@ -270,6 +270,16 @@
                     }
                 }
             };
+        }
+
+        function getRealCoordinateFromGrid(x, y) {
+            const startScreenX = canvas.width / 2 - scale / 2;
+            const startScreenY = canvas.height / 2 - scale / 2;
+
+            const dx = x * scale + startScreenX;
+            const dy = y * scale + startScreenY;
+            
+            return {x: dx, y: dy};
         }
 
         walkingState = 0;
@@ -311,7 +321,34 @@
                         lastFrameMovementX > 0
                     );
                 } else if (entity.category === CharacterType.Enemy) {
-                    drawBasicEntityRect(entity) // DRAW FOR ENEMY
+                    var fOffset = 9;
+                    var flipX = false;
+                    if (entity.direction == "right") {
+                        flipX = false;
+                        fOffset = 15;
+                    }
+                    if (entity.direction == "left") {
+                        flipX = true;
+                        fOffset = 15;
+                    }
+                    if (entity.direction == "forward") {
+                        fOffset = 9;
+                    }
+                    if (entity.direction == "back") {
+                        fOffset = 12;
+                    }
+                    console.log(entity.frame, fOffset, entity.frame + fOffset);
+                    drawSprite(
+                        myBackground.playerSpriteSheet,
+                        entity.frame + fOffset,
+                        entity.position_x,
+                        entity.position_y + this.y,
+                        64,
+                        32,
+                        flipX
+                    );
+
+
                 }
                 
                 else {
@@ -374,8 +411,15 @@
             }
 
             if (category === CharacterType.Enemy) {
-
                 // INIT FOR ENEMY
+
+                const position = getRealCoordinateFromGrid(position_x, position_y);
+                position_x = position.x;
+                position_y = position.y;
+
+                const patrol = getRealCoordinateFromGrid(patrol_x, patrol_y);
+                patrol_x = patrol.x;
+                patrol_y = patrol.y;
 
             }
             
@@ -395,7 +439,10 @@
                 starting_y: position_y,
                 patrol_x: patrol_x,
                 patrol_y: patrol_y,
-                collidable: collidable
+                collidable: collidable,
+                frame: 0,
+                counter: 0,
+                direction: "left"
             };
 
             entities.push(constructed_character);
@@ -422,7 +469,8 @@
             spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width - 30) / 2, (canvas.height - 30) / 2);
 
             // Create the other stuff
-            spawnEntity(CharacterType.Enemy, 50, 80, "red", position_x = 100, position_y = 100, patrol_x = 200, patrol_y = 200);
+            spawnEntity(CharacterType.Enemy, 50, 80, "red", 1, 1, false, 2, 1);
+            // spawnEntity(CharacterType.Enemy, 50, 80, "red", position_x = 500, position_y = 500, patrol_x = 100, patrol_y = 100);
             // spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
 
@@ -456,6 +504,27 @@
                     // Move towards the target
                     entity.position_x -= (cX / distance) * enemySpeed;
                     entity.position_y -= (cY / distance) * enemySpeed;
+                
+                    // Which way should the entity be facing
+                    const moveX = -(cX / distance);
+                    const moveY = -(cY / distance);
+
+                    if (Math.abs(moveX) > Math.abs(moveY)) {
+                        entity.direction = moveX < 0 ? "left" : "right";
+                    } else {
+                        entity.direction = moveY < 0 ? "back" : "forward";
+                    }
+                    // Increment animation counter
+                    entity.counter += 1;
+
+                    if (entity.counter >= 10) {
+                        entity.counter = 0;
+                        entity.frame += 1
+                        if (entity.frame >= 3) {
+                            entity.frame = 0;
+                        }
+                    }
+
                 }
             }
         }
