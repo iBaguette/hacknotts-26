@@ -14,18 +14,14 @@
 <body onload="startGame()">
     <script>
 
-        var myGamePiece;
+        var player_piece;
         var myObstacles = [];
         var myScore;
 
         function startGame() {
-            myGamePiece = new component(30, 30, "red", 10, 120);
-            myGamePiece.gravity = 0.05;
             myScore = new component("30px", "Consolas", "black", 280, 40, "text");
             myGameArea.start();
-
-
-
+            
         }
 
 
@@ -139,7 +135,7 @@
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
             for (i = 0; i < myObstacles.length; i += 1) {
-                if (myGamePiece.crashWith(myObstacles[i])) {
+                if (player_piece.crashWith(myObstacles[i])) {
                     return;
                 }
             }
@@ -162,8 +158,8 @@
             }
             myScore.text = "SCORE: " + myGameArea.frameNo;
             myScore.update();
-            myGamePiece.newPos();
-            myGamePiece.update();
+            player_piece.newPos();
+            player_piece.update();
         }
 
         function everyinterval(n) {
@@ -171,33 +167,62 @@
             return false;
         }
 
-        function accelerate(n) {
-            myGamePiece.gravity = n;
+        // Manage all characters/entities in the world rn
+        /**
+         * definition for different character types
+         */
+        const CharacterType = {
+            Player: "player",
+            Enemy: "enemy",
+            NPC: "npc",
+            Item: "item",
+            Obstacle: "obstacle",
         }
 
-        window.addEventListener('keydown', (event) => {
-            if (event.key === 'w' || event.key === 'W') {
-                console.log('The w key was pressed!');
-                accelerate(-0.2)
+        var entities = [];
+        var current_entity_id = 0;
+        function spawnEntity(category = CharacterType.Item, size_x, size_y, colour, position_x, position_y, collidable = true) {
+
+            // Player must be singleton
+            if (category === CharacterType.Player) {
+                if (player_piece !== undefined) {
+                    window.alert("Can't spawn a second player");
+                    return;
+                }
             }
-        });
 
-        window.addEventListener("keyup", (event) => {
-            if (event.key === 's' || event.key === 's') {
-                console.log('The S key was pressed!');
-                accelerate(0.2)
-            }
-        });
-
-
-        // Manage all characters/entities in the world rn
-        var characters = [];
-        var character_id = 0;
-        function spawnCharacter(size_x, size_y, colour, position_x, position_y) {
+            // else create the new
             let new_char = new component(size_x, size_y, colour, position_x, position_y);
 
-            characters.push(new_char, character_id++);
-            console.log(`Spawned new character with id: ${character_id}`);
+            const constructed_character = {
+                id: current_entity_id++,
+                component: new_char,
+                category: category,
+                size_x: size_x,
+                size_y: size_y,
+                colour: colour,
+                position_x: position_x,
+                position_y: position_y,
+                collidable: collidable
+            };
+
+            entities.push(constructed_character);
+            console.log(`Spawned new character with id: ${current_entity_id}`);
+
+            return new_char;
+        }
+
+        function getPlayer() {
+            return entities.find(entity => entity.category === CharacterType.Player);
+        }
+
+        function createInitialCharacters() {
+            // Create the player
+            spawnEntity(CharacterType.Player, 30, 30, "green", 10, 120);
+
+            // Create the other stuff
+            spawnEntity(CharacterType.Enemy, 20, 20, "red", 100, 500);
+            spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
     </script>
     <br>
