@@ -48,6 +48,7 @@
         var y = 0;
         const direction_to_move = 1;
         const speed = 3;
+        const enemySpeed = 2;
 
         // Background is 139
         // StartTile is the index in the map that should be the tile at 0, 0 at the start of the game
@@ -203,7 +204,6 @@
             // console.log("X:", x, "Y:", y);
         }
 
-
         function drawSprite(sheet, spriteIndex, xD, yD, scale, size=16) {
             let columns = Math.floor(sheet.width / size);
             if (columns <= 0) columns = 0;
@@ -301,7 +301,11 @@
                         96,
                         32
                     );
-                } else {
+                } else if (entity.category === CharacterType.Enemy) {
+                    ctx.fillRect(entity.position_x, entity.position_y, entity.size_x, entity.size_y) // DRAW FOR ENEMY
+                }
+                
+                else {
                     drawBasicEntityRect(entity);
                 }
             }
@@ -319,6 +323,7 @@
             return false;
         }
 
+
         // Manage all characters/entities in the world rn
         /**
          * definition for different character types
@@ -331,9 +336,8 @@
             Obstacle: "obstacle",
         }
 
-        var entities = [];
         var current_entity_id = 0;
-        function spawnEntity(category = CharacterType.Item, size_x, size_y, colour, position_x, position_y, collidable = true) {
+        function spawnEntity(category = CharacterType.Item, size_x, size_y, position_x, position_y, colour = "red", collidable = true, patrol_x = 0, patrol_y = 0) {
             // Player must be singleton
             if (category === CharacterType.Player) {
                 if (player_piece !== undefined) {
@@ -341,6 +345,13 @@
                     return;
                 }
             }
+
+            if (category === CharacterType.Enemy) {
+
+                // INIT FOR ENEMY
+
+            }
+            
             console.log(`Spawning entity of type ${category} at (${position_x}, ${position_y})`);
             // else create the new
             // let new_char = new component(size_x, size_y, colour, position_x, position_y);
@@ -353,11 +364,15 @@
                 colour: colour,
                 position_x: position_x,
                 position_y: position_y,
+                starting_x: position_x,
+                starting_y: position_y,
+                patrol_x: patrol_x,
+                patrol_y: patrol_y,
                 collidable: collidable
             };
 
             entities.push(constructed_character);
-            // console.lwog(`Spawned new character with id: ${current_entity_id}`);
+            // console.log(`Spawned new character with id: ${current_entity_id}`);
 
             // set singleton 
             if (category === CharacterType.Player) {
@@ -378,17 +393,42 @@
             // Create the player
             console.log(`Spawning player at ${canvas.width}`);
             spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width - 30) / 2, (canvas.height - 30) / 2);
-            // spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width*3), (canvas.height*3));
 
             // Create the other stuff
-            // spawnEntity(CharacterType.Enemy, 20, 20, "red", 0, 150);
+            spawnEntity(CharacterType.Enemy, 50, 80, position_x = 100, position_y = 100, patrol_x = 200, patrol_y = 200);
             // spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
+
 
         function doEntityMovementCalcs() {
             for (const entity of entities) {
                 if (entity.category === CharacterType.Enemy) {
-                    entity.position_x += direction_to_move;
+                    // Difference between current position and target
+                    const cX = entity.position_x - entity.patrol_x;
+                    const cY = entity.position_y - entity.patrol_y;
+
+                    // Distance to target
+                    const distance = Math.sqrt(cX * cX + cY * cY);
+
+                    if (distance <= 5) {
+                        console.log("SWITCH");
+
+                        // Swap the current target and starting point
+                        const oldTargetX = entity.patrol_x;
+                        const oldTargetY = entity.patrol_y;
+
+                        entity.patrol_x = entity.starting_x;
+                        entity.patrol_y = entity.starting_y;
+
+                        entity.starting_x = oldTargetX;
+                        entity.starting_y = oldTargetY;
+
+                        continue;
+                    }
+
+                    // Move towards the target
+                    entity.position_x -= (cX / distance) * enemySpeed;
+                    entity.position_y -= (cY / distance) * enemySpeed;
                 }
             }
         }
