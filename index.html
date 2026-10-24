@@ -76,7 +76,7 @@
         const startTileX = 5;
         const startTileY = 2;
         const map = [
-            [t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b],
+            [t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b],
             [t.win11, t.win12, t.win13, t.win11, t.win12, t.win13, t.b, t.b, t.b, t.win21, t.win22, t.win23,],
             [t.win14, t.win15, t.win16, t.win14, t.win15, t.win16, t.mat1, t.mat2, t.mat3, t.win24, t.win25, t.win26,],
             [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
@@ -164,8 +164,7 @@
         }
 
 
-        function drawSprite(sheet, spriteIndex, xD, yD, scale) {
-            const size = 16;
+        function drawSprite(sheet, spriteIndex, xD, yD, scale, size=16) {
             let columns = Math.floor(sheet.width / size);
             if (columns <= 0) columns = 0;
 
@@ -178,7 +177,7 @@
             ctx.drawImage(
                 sheet,
                 sX, sY, size, size, // Source - where to crop from the sheet
-                xD + x, yD + y, scale, scale // Destination - where to draw it
+                xD, yD, scale, scale // Destination - where to draw it
             );
         }
 
@@ -217,8 +216,8 @@
                         drawSprite(
                             this.backSheet,
                             spriteIndex,
-                            screenX,
-                            screenY,
+                            screenX + x,
+                            screenY + y,
                             scale
                         );
                     }
