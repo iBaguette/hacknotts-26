@@ -36,8 +36,9 @@
         var myObstacles = [];
         var myScore;
 
-        let x = 0;
-        let y = 0;
+        var x = 0;
+        var y = 0;
+        const speed = 1;
 
         // Background is 139
         // StartTile is the index in the map that should be the tile at 0, 0 at the start of the game
@@ -49,8 +50,8 @@
             "blacc": 111
         }
 
-        const startTileX = 1;
-        const startTileY = 0;
+        const startTileX = 5;
+        const startTileY = 2;
         const map = [
             [t.cracked, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid, t.slid],
             [t.cracked, t.slid, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.blacc, t.slid],
@@ -80,8 +81,50 @@
         }
 
 
+        var pressedKeys = {};
+        window.onkeyup = function(e) { pressedKeys[e.keyCode] = false; }
+        window.onkeydown = function(e) { pressedKeys[e.keyCode] = true; }
 
-        function drawSprite(sheet, spriteIndex, x, y, scale) {
+        function handleJoystick() {
+            const gamepads = navigator.getGamepads();
+            const joystick = gamepads[0];
+            var horizontal = 0;
+            var vertical = 0;
+            if (!joystick || !player_piece) {
+                console.log(pressedKeys)
+                if (pressedKeys[37] || pressedKeys[65]) {
+                    horizontal += 1;
+                }
+                if (pressedKeys[39] || pressedKeys[68]) {
+                    horizontal -= 1;
+                }
+                if (pressedKeys[87] || pressedKeys[38]) {
+                    vertical += 1;
+                }
+                if (pressedKeys[83] || pressedKeys[40]) {
+                    vertical -= 1;
+                }
+            } else {
+                horizontal = joystick.axes[0];
+                vertical = joystick.axes[1];
+            };
+
+
+            const deadzone = 0.25;
+
+            if (Math.abs(horizontal) > deadzone) {
+                x += horizontal * speed;
+            }
+
+            if (Math.abs(vertical) > deadzone) {
+                y += vertical * speed;
+            }
+
+            console.log("X:", x, "Y:", y);
+        }
+
+
+        function drawSprite(sheet, spriteIndex, xD, yD, scale) {
             const size = 16;
             let columns = Math.floor(sheet.width / size);
             if (columns <= 0) columns = 0;
@@ -95,7 +138,7 @@
             ctx.drawImage(
                 sheet,
                 sX, sY, size, size, // Source - where to crop from the sheet
-                x, y, scale, scale    // Destination - where to draw it
+                xD + x, yD + y, scale, scale // Destination - where to draw it
             );
         }
 
@@ -223,6 +266,9 @@
                 entity.component.newPos();
                 entity.component.update();
             }
+
+
+            handleJoystick();
         }
 
         function everyinterval(n) {
@@ -294,6 +340,11 @@
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
         createInitialCharacters();
+
+
+
+
+
     </script>
     <br>
 </body>
