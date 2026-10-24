@@ -188,6 +188,17 @@
                 accelerate(0.2)
             }
         });
+
+
+        // Manage all characters/entities in the world rn
+        var characters = [];
+        var character_id = 0;
+        function spawnCharacter(size_x, size_y, colour, position_x, position_y) {
+            let new_char = new component(size_x, size_y, colour, position_x, position_y);
+
+            characters.push(new_char, character_id++);
+            console.log(`Spawned new character with id: ${character_id}`);
+        }
     </script>
     <br>
 </body>
