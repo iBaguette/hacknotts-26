@@ -24,6 +24,7 @@
             height: auto;
 
             margin: 0 auto;
+            image-rendering: pixelated;
         }
     </style>
 </head>
@@ -33,7 +34,7 @@
     <script>
 
         var player_piece;
-        var myObstacles = [];
+        var entities = [];
         var myScore;
 
         var x = 0;
@@ -61,9 +62,8 @@
         ];
 
         function startGame() {
-            myScore = new component("30px", "Consolas", "black", 280, 40, "text");
             myGameArea.start();
-
+            myBackground = new background(480, 270);
         }
 
 
@@ -74,13 +74,25 @@
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.frameNo = 0;
                 this.interval = setInterval(updateGameArea, 20);
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
             },
             clear: function () {
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             }
         }
 
+        function drawEntity(entity) {
+            const ctx = myGameArea.context;
 
+            ctx.fillStyle = entity.colour;
+            ctx.fillRect(
+                entity.position_x,
+                entity.position_y,
+                entity.size_x,
+                entity.size_y
+            );
+        }
         var pressedKeys = {};
         window.onkeyup = function(e) { pressedKeys[e.keyCode] = false; }
         window.onkeydown = function(e) { pressedKeys[e.keyCode] = true; }
@@ -181,61 +193,6 @@
 
         }
 
-        function component(width, height, color, x, y, type) {
-            this.background = new background(width, height);
-            this.type = type;
-            this.score = 0;
-            this.width = width;
-            this.height = height;
-            this.x = x;
-            this.y = y;
-            this.update = function () {
-                ctx = myGameArea.context;
-                // Draw background
-                this.background.draw()
-
-                // Draw different types of stuff
-                if (this.type == "text") {
-                    // ctx.font = this.width + " " + this.height;
-                    // ctx.fillStyle = color;
-                    // ctx.fillText(this.text, this.x, this.y);
-                } else {
-                    ctx.fillStyle = color;
-                    ctx.fillRect(this.x, this.y, this.width, this.height);
-                }
-
-
-            }
-            this.newPos = function () {
-                this.gravitySpeed += this.gravity;
-                this.x += this.speedX;
-                this.y += this.speedY + this.gravitySpeed;
-                this.hitBottom();
-            }
-            this.hitBottom = function () {
-                var rockbottom = myGameArea.canvas.height - this.height;
-                if (this.y > rockbottom) {
-                    this.y = rockbottom;
-                    this.gravitySpeed = 0;
-                }
-            }
-            this.crashWith = function (otherobj) {
-                var myleft = this.x;
-                var myright = this.x + (this.width);
-                var mytop = this.y;
-                var mybottom = this.y + (this.height);
-                var otherleft = otherobj.x;
-                var otherright = otherobj.x + (otherobj.width);
-                var othertop = otherobj.y;
-                var otherbottom = otherobj.y + (otherobj.height);
-                var crash = true;
-                if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-                    crash = false;
-                }
-                return crash;
-            }
-        }
-
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
             // console.log(myObstacles.length)
@@ -255,20 +212,13 @@
                 maxGap = 200;
                 gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
             }
-            for (i = 0; i < myObstacles.length; i += 1) {
-                myObstacles[i].x += -1;
-                myObstacles[i].update();
+            for (i = 0; i < entities.length; i += 1) {
+                entities[i].x += -1;
             }
-            myScore.text = "SCORE: " + myGameArea.frameNo;
-            myScore.update();
             
-            for (var entity in myObstacles) {
-                entity.component.newPos();
-                entity.component.update();
+            for (const entity of entities) {
+                drawEntity(entity);
             }
-
-
-            handleJoystick();
         }
 
         function everyinterval(n) {
@@ -291,7 +241,6 @@
         var entities = [];
         var current_entity_id = 0;
         function spawnEntity(category = CharacterType.Item, size_x, size_y, colour, position_x, position_y, collidable = true) {
-
             // Player must be singleton
             if (category === CharacterType.Player) {
                 if (player_piece !== undefined) {
@@ -301,15 +250,16 @@
             }
 
             // else create the new
-            let new_char = new component(size_x, size_y, colour, position_x, position_y);
+            // let new_char = new component(size_x, size_y, colour, position_x, position_y);
 
             const constructed_character = {
                 id: current_entity_id++,
-                component: new_char,
                 category: category,
                 size_x: size_x,
                 size_y: size_y,
                 colour: colour,
+                position_x: position_x,
+                position_y: position_y,
                 collidable: collidable
             };
 
@@ -324,7 +274,7 @@
 
             console.log(`Created entity #${current_entity_id}`);
             console.log(constructed_character);
-            return new_char;
+            return constructed_character;
         }
 
         function getPlayer() {
@@ -336,15 +286,10 @@
             spawnEntity(CharacterType.Player, 30, 30, "green", 10, 120);
 
             // Create the other stuff
-            spawnEntity(CharacterType.Enemy, 20, 20, "red", 40, 150);
+            spawnEntity(CharacterType.Enemy, 20, 20, "red", 0, 150);
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
         createInitialCharacters();
-
-
-
-
-
     </script>
     <br>
 </body>
