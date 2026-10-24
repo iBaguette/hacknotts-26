@@ -171,17 +171,30 @@
             border: [[t.border]]
         };
 
+        // ---- COnstruct LEVEL ---- //
+
         // bottom section:
         paint(0, 14, 36, 1, patterns.border);
-        paint(0, 4, 36, 10, patterns.floor);
+        paint(0, 4, 36, 4, patterns.floor);
+        paint(0, 11, 36, 3, patterns.floor);
 
-        // Left and right hand windows
+
+        // fake road
+        paint(0, 9, 3, 1, patterns.road_marking);
+        paint(7, 9, 3, 1, patterns.road_marking);
+        paint(14, 9, 3, 1, patterns.road_marking);
+        paint(21, 9, 3, 1, patterns.road_marking);
+        paint(28, 9, 3, 1, patterns.road_marking);
+        paint(35, 9, 1, 1, patterns.road_marking);
+
+        // First section, left and right hand windows
         paint(0, 2, 14, 2, patterns.window_centre_pane);
         paint(14, 2, 1, 2, patterns.window_right_join);
+        paint(20, 2, 1, 2, patterns.window_left_join);
+        paint(21, 2, 15, 2, patterns.window_centre_pane);
+        paint(16, 2, 3, 2, patterns.mat);
 
-        paint(21, 2, 1, 2, patterns.window_left_join);
-        paint(22, 2, 14, 2, patterns.window_centre_pane);
-
+        // ---- END LEVEL CONSTRUCTION ---- //
 
         /**
          * BUILD AND START ALL LOGIC HERE
