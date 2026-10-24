@@ -39,6 +39,7 @@
 
         let x = 0;
         let y = 0;
+        const direction_to_move = 1;
 
         // Background is 139
         // StartTile is the index in the map that should be the tile at 0, 0 at the start of the game
@@ -169,6 +170,7 @@
                 maxGap = 200;
                 gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
             }
+            updateEntities();
             for (i = 0; i < entities.length; i += 1) {
                 entities[i].x += -1;
             }
@@ -176,7 +178,7 @@
             for (const entity of entities) {
                 drawEntity(entity);
             }
-            
+
             myBackground.draw();
         }
 
@@ -249,6 +251,25 @@
             spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
         createInitialCharacters();
+
+        function updateEntities() {
+            for (const entity of entities) {
+                if (entity.category === CharacterType.Enemy) {
+                    entity.position_x += direction_to_move;
+                }
+            }
+        }
+
+
+        (async () => {
+            while (true) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                direction_to_move = -1;
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                direction_to_move = 1;
+            }
+        })();
         
     </script>
     <br>
