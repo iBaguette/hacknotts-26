@@ -47,7 +47,7 @@
         var x = 0;
         var y = 0;
         const direction_to_move = 1;
-        const speed = 1;
+        const speed = 3;
 
         // Background is 139
         // StartTile is the index in the map that should be the tile at 0, 0 at the start of the game
@@ -294,7 +294,7 @@
                     drawSprite(
                         myBackground.playerSpriteSheet,
                         walkingState, // sprite index
-                        entity.position_x,
+                        entity.position_x - this.x,
                         entity.position_y,
                         96,
                         32
