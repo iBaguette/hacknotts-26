@@ -54,6 +54,7 @@
         // StartTile is the index in the map that should be the tile at 0, 0 at the start of the game
         // The start tile is drawn in the middle of the screen initially
 
+
         const t = {
             "b":       { "pos": 68,  "collidable": false, "interactable": false },
             "b2":      { "pos": 69,  "collidable": false, "interactable": false },
@@ -78,7 +79,11 @@
             "mat3":    { "pos": 128, "collidable": false, "interactable": false },
             "cracked": { "pos": 139, "collidable": false, "interactable": false },
             "slid":    { "pos": 120, "collidable": false, "interactable": false },
-            "blacc":   { "pos": 111, "collidable": false, "interactable": false }
+            "blacc":   { "pos": 111, "collidable": false, "interactable": false },
+            "border":  { "pos": 18, "collidable": true,  "interactable": false },
+            "r1":     { "pos": 267, "collidable": false,  "interactable": false },
+            "r2":     { "pos": 268, "collidable": false,  "interactable": false },
+            "r3":     { "pos": 269, "collidable": false,  "interactable": false },
         };
 
 
@@ -107,19 +112,76 @@
             }
         }
 
-        const startTileX = 5;
-        const startTileY = 2;
-        const map = [
-            [t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b, t.b],
-            [t.win11, t.win12, t.win13, t.win11, t.win12, t.win13, t.b, t.b, t.b, t.win21, t.win22, t.win23,],
-            [t.win14, t.win15, t.win16, t.win14, t.win15, t.win16, t.mat1, t.mat2, t.mat3, t.win24, t.win25, t.win26,],
-            [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
-            [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
-            [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
-            [t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2, t.p1, t.p2],
-    
-            Array.from({ length: 100 }, (_, i) => (i % t.p1) + t.p2),
-        ];
+        const startTileX = 17.5;
+        const startTileY = 4.5;
+        
+        const WIDTH = 36;
+        const HEIGHT = 15;
+
+        // Initialise the map with background tiles
+        const map = Array.from(
+            { length: HEIGHT },
+            () => Array(WIDTH).fill(t.b)
+        );
+
+        // Paint a repeating pattern into a rectangular area
+        function paint(x, y, width, height, pattern) {
+            for (let dy = 0; dy < height; dy++) {
+                for (let dx = 0; dx < width; dx++) {
+                    const tile = pattern[dy % pattern.length][dx % pattern[0].length];
+                    map[y + dy][x + dx] = tile;
+                }
+            }
+        }
+
+
+        const patterns = {
+            floor: [[t.p1, t.p2]],
+
+            window_left_join: [
+                [t.win11],
+                [t.win14]
+            ],
+
+            window_centre_pane: [
+                [t.win12],
+                [t.win15]
+            ],
+
+            window_right_join: [
+                [t.win13],
+                [t.win16]
+            ],
+
+            window1: [
+                [t.win11, t.win12, t.win13],
+                [t.win14, t.win15, t.win16]
+            ],
+
+            window2: [
+                [t.win21, t.win22, t.win23],
+                [t.win24, t.win25, t.win26]
+            ],
+
+            road_marking: [
+                [t.r1, t.r2, t.r3],
+            ],
+
+            mat: [[t.mat1, t.mat2, t.mat3]],
+            border: [[t.border]]
+        };
+
+        // bottom section:
+        paint(0, 14, 36, 1, patterns.border);
+        paint(0, 4, 36, 10, patterns.floor);
+
+        // Left and right hand windows
+        paint(0, 2, 14, 2, patterns.window_centre_pane);
+        paint(14, 2, 1, 2, patterns.window_right_join);
+
+        paint(21, 2, 1, 2, patterns.window_left_join);
+        paint(22, 2, 14, 2, patterns.window_centre_pane);
+
 
         /**
          * BUILD AND START ALL LOGIC HERE
@@ -401,7 +463,7 @@
                             newY < screenY + 32 &&
                             newY + entity.size_y > screenY
                         ) {
-                            console.log(`Collision detected with tile at (${col}, ${row})`);
+                            console.log(`Collision detected with tile ${map[row][col].name} at (${col}, ${row})`);
                             return true; // Collision detected
                         } else {
                             // console.log(`No collision with tile at (${col}, ${row})`);
