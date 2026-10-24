@@ -253,26 +253,36 @@
                 vertical = joystick.axes[1];
             };
 
-            entity = getPlayer();
+            const entity = getPlayer();
+            if (!entity) return;
 
-            if (checkMapCollision(entity, entity.position_x + lastFrameMovementX * speed, entity.position_y + lastFrameMovementY * speed)) {
-                horizontal = 0;
-                vertical = 0;
-                console.log("Collision detected, stopping movement");
-                return;
+            let dx = Math.abs(horizontal) > deadzone ? horizontal * speed : 0;
+            let dy = Math.abs(vertical) > deadzone ? vertical * speed : 0;
+
+            // horizoatal
+            if (dx !== 0 && !checkMapCollision(
+                entity,
+                entity.position_x - (x + dx),
+                entity.position_y - y
+            )) {
+                x += dx;
+            } else {
+                dx = 0;
             }
 
-
-            lastFrameMovementX = horizontal;
-            lastFrameMovementY = vertical;
-
-            if (Math.abs(horizontal) > deadzone) {
-                x += horizontal * speed;
+            // vertical
+            if (dy !== 0 && !checkMapCollision(
+                entity,
+                entity.position_x - x,
+                entity.position_y - (y + dy)
+            )) {
+                y += dy;
+            } else {
+                dy = 0;
             }
 
-            if (Math.abs(vertical) > deadzone) {
-                y += vertical * speed;
-            }
+            lastFrameMovementX = dx / speed;
+            lastFrameMovementY = dy / speed;
 
             // console.log("X:", x, "Y:", y);
         }
@@ -453,27 +463,23 @@
                 for (let col = 0; col < map[row].length; col++) {
                     const spriteIndex = map[row][col].pos;
 
-                    const screenX = canvas.width / 2 - 32 / 2; + (col - startTileX) * 32;
-                    const screenY = canvas.width / 2 - 32 / 2; + (row - startTileY) * 32;   
+                    const tileX = canvas.width / 2 - scale / 2 + (col - startTileX) * scale;
 
-                    if (map[row][col].collidable) {
-                        if (
-                            newX < screenX + 32 &&
-                            newX + entity.size_x > screenX &&
-                            newY < screenY + 32 &&
-                            newY + entity.size_y > screenY
-                        ) {
-                            console.log(`Collision detected with tile ${map[row][col].name} at (${col}, ${row})`);
-                            return true; // Collision detected
-                        } else {
-                            // console.log(`No collision with tile at (${col}, ${row})`);
-                        }
+                    const tileY = canvas.height / 2 - scale / 2 + (row - startTileY) * scale;
+
+                    if (
+                        newX < tileX + scale &&
+                        newX + entity.size_x > tileX &&
+                        newY < tileY + scale &&
+                        newY + entity.size_y > tileY
+                    ) {
+                        return true;
                     }
                 }
             }
 
+            return false;
         }
-
 
         // Manage all characters/entities in the world rn
         /**
