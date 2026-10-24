@@ -461,7 +461,8 @@
         function checkMapCollision(entity, newX, newY) {
             for (let row = 0; row < map.length; row++) {
                 for (let col = 0; col < map[row].length; col++) {
-                    const spriteIndex = map[row][col].pos;
+
+                    if (!map[row][col].collidable) continue;
 
                     const tileX = canvas.width / 2 - scale / 2 + (col - startTileX) * scale;
 
