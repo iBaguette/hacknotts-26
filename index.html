@@ -23,7 +23,11 @@
             myGamePiece.gravity = 0.05;
             myScore = new component("30px", "Consolas", "black", 280, 40, "text");
             myGameArea.start();
+
+
+
         }
+
 
         var myGameArea = {
             canvas: document.createElement("canvas"),
@@ -40,7 +44,41 @@
             }
         }
 
+
+
+        function drawSprite(sheet, frameIndex, frameSize) {
+            this.size = 16;
+            
+            ctx.drawImage(sprite, 0, tileIndex * spriteSize, spriteSize, spriteSize, tileX, tileY, spriteSize, spriteSize);
+
+        }
+
+
+        function background(width, height) {
+
+            this.backSheet = new Image();
+            this.backSheet.src = "neo_zero_tiles_and_buildings_01.png";
+            this.backSheet.onload = () => {
+                this.background = splitSheet(this.backSheet, 0, 16, 16);
+
+                context.drawImage(image, x * widthOfOnePiece, y * heightOfOnePiece, widthOfOnePiece, heightOfOnePiece, 0, 0, canvas.width, canvas.height);
+
+
+            }
+
+            this.draw = function () {
+                ctx = myGameArea.context;
+                ctx.fillRect(10, 10, 10, 10);
+
+                ctx.drawImage(this.backSheet);
+
+
+            }
+
+        }
+
         function component(width, height, color, x, y, type) {
+            this.background = new background(width, height);
             this.type = type;
             this.score = 0;
             this.width = width;
@@ -53,6 +91,10 @@
             this.gravitySpeed = 0;
             this.update = function () {
                 ctx = myGameArea.context;
+                // Draw background
+                this.background.draw()
+                
+                // Draw player and text
                 if (this.type == "text") {
                     ctx.font = this.width + " " + this.height;
                     ctx.fillStyle = color;
@@ -61,6 +103,8 @@
                     ctx.fillStyle = color;
                     ctx.fillRect(this.x, this.y, this.width, this.height);
                 }
+
+
             }
             this.newPos = function () {
                 this.gravitySpeed += this.gravity;
