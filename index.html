@@ -311,7 +311,7 @@
                         lastFrameMovementX > 0
                     );
                 } else if (entity.category === CharacterType.Enemy) {
-                    ctx.fillRect(entity.position_x, entity.position_y, entity.size_x, entity.size_y) // DRAW FOR ENEMY
+                    drawBasicEntityRect(entity) // DRAW FOR ENEMY
                 }
                 
                 else {
@@ -364,7 +364,7 @@
         }
 
         var current_entity_id = 0;
-        function spawnEntity(category = CharacterType.Item, size_x, size_y, position_x, position_y, colour = "red", collidable = true, patrol_x = 0, patrol_y = 0) {
+        function spawnEntity(category = CharacterType.Item, size_x, size_y, colour = "red", position_x, position_y, collidable = true, patrol_x = 0, patrol_y = 0) {
             // Player must be singleton
             if (category === CharacterType.Player) {
                 if (player_piece !== undefined) {
@@ -399,7 +399,7 @@
             };
 
             entities.push(constructed_character);
-            // console.log(`Spawned new character with id: ${current_entity_id}`);
+            // console.lwog(`Spawned new character with id: ${current_entity_id}`);
 
             // set singleton 
             if (category === CharacterType.Player) {
@@ -422,7 +422,7 @@
             spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width - 30) / 2, (canvas.height - 30) / 2);
 
             // Create the other stuff
-            spawnEntity(CharacterType.Enemy, 50, 80, position_x = 100, position_y = 100, patrol_x = 200, patrol_y = 200);
+            spawnEntity(CharacterType.Enemy, 50, 80, "red", position_x = 100, position_y = 100, patrol_x = 200, patrol_y = 200);
             // spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
 
