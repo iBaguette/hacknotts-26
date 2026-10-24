@@ -36,6 +36,19 @@
         var myObstacles = [];
         var myScore;
 
+        let x = 0;
+        let y = 0;
+
+        // Background is 139
+        // StartTile is the index in the map that should be the tile at 0, 0 at the start of the game
+        // The start tile is drawn in the middle of the screen initially
+        const startTileX = 1;
+        const startTileY = 0;
+        const map = [
+            [139, 138, 137],
+            [139, 120, ]
+        ];
+
         function startGame() {
             myScore = new component("30px", "Consolas", "black", 280, 40, "text");
             myGameArea.start();
@@ -58,7 +71,7 @@
 
 
 
-        function drawSprite(sheet, spriteIndex, x, y) {
+        function drawSprite(sheet, spriteIndex, x, y, scale) {
             const size = 16;
             let columns = Math.floor(sheet.width / size);
             if (columns <= 0) columns = 0;
@@ -72,12 +85,12 @@
             ctx.drawImage(
                 sheet,
                 sX, sY, size, size, // Source - where to crop from the sheet
-                x, y, 64, 64    // Destination - where to draw it
+                x, y, scale, scale    // Destination - where to draw it
             );
         }
 
         function background(width, height) {
-
+            const scale = 32;
             this.backSheet = new Image();
             this.backSheet.src = "neo_zero_tiles_and_buildings_01.png";
             this.loaded = false;
@@ -86,17 +99,32 @@
             }
 
             this.draw = function () {
-                if (this.loaded) {
-                    
-                    drawSprite(this.backSheet, 12, 10, 10);
-                    // ctx.drawImage(this.backSheet, 10, 10);
-                    // ctx.drawImage(
-                    //     this.backSheet,
-                    //     0, 0, 160, 160,  // Source rectangle
-                    //     10, 10, 64, 64 // Destination rectangle, enlarged 4x
-                    // );
+                if (!this.loaded) return;
+
+                const canvas = myGameArea.canvas;
+
+                // Centre the starting tile on the canvas
+                const startScreenX = canvas.width / 2 - scale / 2;
+                const startScreenY = canvas.height / 2 - scale / 2;
+
+                // Draw each tile in the map
+                for (let row = 0; row < map.length; row++) {
+                    for (let col = 0; col < map[row].length; col++) {
+                        const spriteIndex = map[row][col];
+
+                        const screenX = startScreenX + (col - startTileX) * scale;
+                        const screenY = startScreenY + (row - startTileY) * scale;
+
+                        drawSprite(
+                            this.backSheet,
+                            spriteIndex,
+                            screenX,
+                            screenY,
+                            scale
+                        );
+                    }
                 }
-            }
+            };
 
         }
 
