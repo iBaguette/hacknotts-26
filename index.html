@@ -269,11 +269,11 @@
         window.onkeyup = function (e) { pressedKeys[e.keyCode] = false; }
         window.onkeydown = function (e) { pressedKeys[e.keyCode] = true; }
 
-        const gamepads = navigator.getGamepads();
-        const joystick = gamepads[0];
         const deadzone = 0.25;
-
+        
         function handleInput() {
+            const gamepads = navigator.getGamepads();
+            const joystick = gamepads[0];
             var horizontal = 0;
             var vertical = 0;
             if (!joystick || !player_piece) {
@@ -632,6 +632,7 @@
             // Create the player
             console.log(`Spawning player at ${canvas.width}`);
             spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width - 30) / 2, (canvas.height - 30) / 2);
+            // spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width - 30) / 2, (canvas.height - 30) / 2);
 
             // Create the other stuff
             spawnEntity(CharacterType.Enemy, 50, 80, "1", 1, 1, false, 2, 1);
