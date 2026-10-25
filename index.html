@@ -114,7 +114,7 @@
         }
 
         const startTileX = 18;
-        const startTileY = 14; // 23?
+        const startTileY = 16; // 23?
 
         const WIDTH = 37;
         const HEIGHT = 160;
@@ -175,13 +175,14 @@
         const room2WallHeight = room3WallHeight + 10;
         paint(10, room2WallHeight, 7, 1, [[t.wh]]);
         paint(20, room2WallHeight, 7, 1, [[t.wh]]);
-        paint(17, room2WallHeight, 1, 1, [[t.openDl]]);
-        paint(19, room2WallHeight, 1, 1, [[t.openDr]]);
+        paint(18, room2WallHeight, 1, 1, [[t.openDl]]);
+        paint(17, room2WallHeight, 1, 1, [[t.h3b]]);
+        paint(19, room2WallHeight, 1, 1, [[t.wtl]]);
         paint(9, room2WallHeight, 1, 1, [[t.v3l]]);
         paint(27, room2WallHeight, 1, 1, [[t.v3r]]);
         paint(9, room2WallHeight + 1, 1, 26, [[t.wv]]);
         paint(27, room2WallHeight + 1, 1, 26, [[t.wv]]);
-
+        
         // Draw first/ bottom rooms walls
         const room1WallHeight = room2WallHeight + 25;
         paint(10, room1WallHeight + 1, 7, 1, [[t.wh]]);
@@ -189,17 +190,19 @@
         paint(10, room1WallHeight, 16, 1, [[t.b1]]);
         paint(27, room1WallHeight + 1, 1, 1, [[t.wbr]])
         paint(9, room1WallHeight + 1, 1, 1, [[t.wbl]])
-        paint(17, room1WallHeight + 1, 1, 1, [[t.openDl]])
-        paint(19, room1WallHeight + 1, 1, 1, [[t.openDr]])
+        paint(18, room1WallHeight + 1, 1, 1, [[t.openDr]])
         paint(9, room1WallHeight - 6, 1, 7, [[t.wv]])
         paint(9, room1WallHeight - 7, 1, 1, [[t.v3l]])
         paint(27, room1WallHeight - 6, 1, 7, [[t.wv]])
         paint(27, room1WallHeight - 7, 1, 1, [[t.v3r]])
         paint(10, room1WallHeight - 7, 7, 1, [[t.wh]])
         paint(20, room1WallHeight - 7, 7, 1, [[t.wh]])
+        paint(17, 28, 1, 1, [[t.wbr]]);
+        paint(19, 28, 1, 1, [[t.wbl]]);
+
         //Closed door - TODO: OPEN WHEN PUZZLE SOLVED, ALSO MAKE A CLOSED DOOR LOL
-        paint(17, room1WallHeight - 7, 1, 1, [[t.openDl]])
-        paint(19, room1WallHeight - 7, 1, 1, [[t.openDr]])
+        // paint(17, room1WallHeight - 7, 1, 1, [[t.openDl]])
+        paint(18, room1WallHeight - 7, 1, 1, [[t.openDr]])
 
         // Draw road
         const roadHeight = room1WallHeight + 2;
@@ -213,41 +216,50 @@
         paint(0, roadHeight + 7, WIDTH, 4, [[t.p1]]);
 
 
-        // Construct LABYRINTH
+        // ---- Construct LABYRINTH ---- //
 
-// Construct LABYRINTH
+        const labyrinth = [
+            "...#...#.#...#...",
+            ".#.#.#.#.#.#.#.##",
+            ".#...#...#.#...#.",
+            ".#######.#.#####.",
+            ".#.......#...#.#.",
+            ".#.#######.###.#.",
+            ".#.#.....#...#...",
+            ".###.#.#####.#.#.",
+            ".#...#.....#...#.",
+            ".###.#####.#.###.",
+            ".#.....#.....#...",
+            ".#.#####.#####.#.",
+            "...#.#...#...#.#.",
+            "####.#.###.###.##",
+            ".....#.#...#.....",
+            ".#.###.#.#.#####.",
+            ".#.....#.#......."
+        ];
 
-        // --- STUFF
-        paint(10+1, room2WallHeight + 2, 5, 1, [[t.wh]]);
-        paint(10+8, room2WallHeight + 4, 5, 1, [[t.wh]]);
-        paint(10+1, room2WallHeight + 6, 5, 1, [[t.wh]]);
-        paint(10+8, room2WallHeight + 6, 1, 10, [[t.wv]]);
-        paint(10+6, room2WallHeight + 2, 8, 1, [[t.wh]]);
-        paint(10+0, room2WallHeight + 4, 8, 1, [[t.wh]]);
-        paint(10+15, room2WallHeight + 2, 1, 3, [[t.wv]]);
-        paint(10+13, room2WallHeight + 4, 1, 9, [[t.wv]]);
+        const labyrinthX = 10;
+        const labyrinthY = room2WallHeight + 1;
 
-        // --- Left
-        paint(10+6, room2WallHeight + 6, 1, 2, [[t.wv]]);
-        paint(10+2, room2WallHeight + 8, 6, 1, [[t.wh]]);
-        paint(10+0, room2WallHeight + 10, 6, 1, [[t.wh]]);
-        paint(10+2, room2WallHeight + 12, 6, 1, [[t.wh]]);
-        paint(10+0, room2WallHeight + 14, 6, 1, [[t.wh]]);
+        for (let y = 0; y < labyrinth.length; y++) {
+            for (let x = 0; x < labyrinth[y].length; x++) {
 
-        // --- Right
-        paint(10+10, room2WallHeight + 6, 3, 1, [[t.wh]]);
-        paint(10+15, room2WallHeight + 6, 2, 1, [[t.wh]]);
-        paint(10+9, room2WallHeight + 8, 3, 1, [[t.wh]]);
-        paint(10+14, room2WallHeight + 8, 2, 1, [[t.wh]]);
-        paint(10+10, room2WallHeight + 10, 3, 1, [[t.wh]]);
-        paint(10+15, room2WallHeight + 10, 2, 1, [[t.wh]]);
-        paint(10+9, room2WallHeight + 12, 3, 1, [[t.wh]]);
-        paint(10+14, room2WallHeight + 12, 2, 1, [[t.wh]]);
-        paint(10+9, room2WallHeight + 14, 8, 1, [[t.wh]]);
+                if (labyrinth[y][x] !== "#") continue;
 
-        // --- Bottom
-        paint(10+1, room2WallHeight + 16, 11, 1, [[t.wh]]);
-        paint(10+13, room2WallHeight + 16, 3, 1, [[t.wh]]);
+                const left = labyrinth[y][x - 1] === "#";
+                const right = labyrinth[y][x + 1] === "#";
+
+                const wallTile = (left || right) ? t.wh : t.wv;
+
+                paint(
+                    labyrinthX + x,
+                    labyrinthY + y,
+                    1,
+                    1,
+                    [[wallTile]]
+                );
+            }
+        }
 
 
         /**
