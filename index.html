@@ -210,6 +210,7 @@
             canvas: document.createElement("canvas"),
             start: function () {
                 this.context = this.canvas.getContext("2d");
+                this.context.imageSmoothingEnabled = false;
                 document.body.insertBefore(this.canvas, document.body.childNodes[0]);
                 this.frameNo = 0;
                 this.interval = setInterval(updateGameArea, 20);
@@ -471,6 +472,7 @@
         /**
          * if the new position calc'd would collide with something that shouldnt be collided with,
          */
+        const tileCollisionVerticalOffset = 0;
         function checkMapCollision(entity, newX, newY) {
             for (let row = 0; row < map.length; row++) {
                 for (let col = 0; col < map[row].length; col++) {
@@ -479,7 +481,7 @@
 
                     const tileX = canvas.width / 2 - scale / 2 + (col - startTileX) * scale;
 
-                    const tileY = canvas.height / 2 - scale / 2 + (row - startTileY) * scale;
+                    const tileY = canvas.height / 2 - scale / 2 + (row - startTileY - tileCollisionVerticalOffset) * scale;
 
                     if (
                         newX < tileX + scale &&
