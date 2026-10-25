@@ -143,18 +143,18 @@
             "w4":           { "pos": 18,  "collidable": true, "interactable": false },
 
             // TODO: SPecial interactible tiles
-            "r1_special":   { "pos": 1,  "collidable": false, "interactable": true },
+            "r1_special":   { "pos": 1,  "collidable": false, "interactable": true, "id": "laby_switch" },
             "r2_special":   { "pos": 20,  "collidable": false, "interactable": true },
         };
 
         // TODO: functions to do when interacting with the special tiles
         const special_tiles_map = {
-            "r1_special": {
+            "laby_switch": {
                 "tooltip": "Press E to interact",
                 "onInteract": function() {
-                    window.alert("You have interacted with the r1_special!");
+                    swapTileOut(31, 37, t.r2_special);
+                    swapTileOut(10, 28, t.openDl);
                 }
-            
             }
         };  
 
@@ -231,9 +231,8 @@
         paint(0, roadHeight + 6, WIDTH, 1, [[t.p2]]);
         paint(0, roadHeight + 7, WIDTH, 4, [[t.p1]]);
 
-        // TODO: Labyrinth interactive buttons, switch
         paint(10, room1WallHeight - 8, 1, 1, [[t.r1_special]]);
-
+        console.log("Painted special tile at (10, " + (room1WallHeight - 8) + ")");
 
         // ---- Construct LABYRINTH ---- //
 
@@ -290,6 +289,33 @@
             initialiseInitialCharacters();
         }
 
+        function swapTileOut(tile_x, tile_y, new_tile_index) {
+            // paint new tile at coords
+            map[tile_y][tile_x] = new_tile_index;
+        }
+
+        function checkInteractions() {
+            const player = getPlayer();
+            if (!player) return;
+
+            const playerTileX = Math.floor((player.position_x + x) / 32);
+            const playerTileY = Math.floor((player.position_y + y) / 32);
+
+            const tile = map[playerTileY][playerTileX];
+            console.log(`checkgin interacton at tile (${playerTileX}, ${playerTileY}), key: ${tile.id}, interactable: ${tile.interactable}`);
+
+            if (tile.interactable) {
+                console.log(`Player is on an interactable tile with id: ${tile.id}`);
+
+                if (special_tiles_map[tile.id]) {
+                    console.log(special_tiles_map[tile.id].tooltip);
+
+                    if (pressedKeys[69]) {
+                        special_tiles_map[tile.id].onInteract();
+                    }
+                }
+            }
+        }
 
         var myGameArea = {
             canvas: document.createElement("canvas"),
@@ -345,16 +371,16 @@
             if (!joystick || !player_piece) {
                 // console.log(pressedKeys)
                 if (pressedKeys[37] || pressedKeys[65]) {
-                    horizontal += 1;
+                    horizontal += 3;
                 }
                 if (pressedKeys[39] || pressedKeys[68]) {
-                    horizontal -= 1;
+                    horizontal -= 3;
                 }
                 if (pressedKeys[87] || pressedKeys[38]) {
-                    vertical += 1;
+                    vertical += 3;
                 }
                 if (pressedKeys[83] || pressedKeys[40]) {
-                    vertical -= 1;
+                    vertical -= 3;
                 }
             } else {
                 horizontal = joystick.axes[0];
@@ -367,29 +393,29 @@
             let dx = Math.abs(horizontal) > deadzone ? horizontal * speed : 0;
             let dy = Math.abs(vertical) > deadzone ? vertical * speed : 0;
 
-            // // horizoatal
-            // if (dx !== 0 && !checkMapCollision(
-            //     entity,
-            //     entity.position_x - (x + dx),
-            //     entity.position_y - y
-            // )) {
-            //     x += dx;
-            // } else {
-            //     dx = 0;
-            // }
+            // horizoatal
+            if (dx !== 0 && !checkMapCollision(
+                entity,
+                entity.position_x - (x + dx),
+                entity.position_y - y
+            )) {
+                x += dx;
+            } else {
+                dx = 0;
+            }
 
-            // // vertical
-            // if (dy !== 0 && !checkMapCollision(
-            //     entity,
-            //     entity.position_x - x,
-            //     entity.position_y - (y + dy)
-            // )) {
-            //     y += dy;
-            // } else {
-            //     dy = 0;
-            // } TODO: RONAN or OLIVER XXXXXXX TURN THIS BACK ON 
-            x += dx; // ALSO REMOVE THESE 2 LINES
-            y += dy;
+            // vertical
+            if (dy !== 0 && !checkMapCollision(
+                entity,
+                entity.position_x - x,
+                entity.position_y - (y + dy)
+            )) {
+                y += dy;
+            } else {
+                dy = 0;
+            }
+
+            checkInteractions();
 
             lastFrameMovementX = dx / speed;
             lastFrameMovementY = dy / speed;
@@ -539,7 +565,7 @@
                         sheet = myBackground.security0SpriteSheet;
                     }
 
-                    console.log(entity.frame, fOffset, entity.frame + fOffset);
+                    // console.log(entity.frame, fOffset, entity.frame + fOffset);
                     drawSprite(
                         sheet,
                         entity.frame + fOffset,
@@ -595,6 +621,7 @@
         const tileCollisionVerticalOffset = 45;
         const tileCollisionVerticalTopOffset = 6;
         function checkMapCollision(entity, newX, newY) {
+            return false;   // TODO REMOVE THIS LINE
             for (let row = 0; row < map.length; row++) {
                 for (let col = 0; col < map[row].length; col++) {
 
