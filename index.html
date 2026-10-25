@@ -146,18 +146,26 @@
             "h3t":       { "pos": 17,  "collidable": true, "interactable": false },
             "w4":           { "pos": 18,  "collidable": true, "interactable": false },
 
-            // TODO: SPecial interactible tiles
             "r1_special":   { "pos": 1,  "collidable": false, "interactable": true, "id": "laby_switch" },
             "r2_special":   { "pos": 20,  "collidable": false, "interactable": true },
+            "winning_switch":   { "pos": 1,  "collidable": false, "interactable": true, "id": "winning_switch" },
         };
 
         // TODO: functions to do when interacting with the special tiles
         const special_tiles_map = {
             "laby_switch": {
-                "tooltip": "Press E to interact",
+                "tooltip": "Press E to switch...",
                 "onInteract": function() {
-                    swapTileOut(31, 37, t.r2_special);
-                    swapTileOut(10, 28, t.openDl);
+                    swapTileOut(10, 27, t.r2_special);
+                    swapTileOut(18, 10, t.openDl);
+                }
+            },
+            "winning_switch": {
+                "tooltip": "Press E to win!",
+                "onInteract": function() {
+                    // Do something when the winning switch is interacted with
+                    swapTileOut(18, 2, t.r2_special);
+                    window.alert("You win!");
                 }
             }
         };  
@@ -190,13 +198,13 @@
         paint(27, room3WallHeight + 1, 1, 9, [[t.wv]]);
 
         // Winning switch
-        paint(18, room3WallHeight + 2, 1, 1, [[t.r1_special]]);
+        paint(18, room3WallHeight + 2, 1, 1, [[t.winning_switch]]);
 
 
         const room2WallHeight = room3WallHeight + 10;
         paint(10, room2WallHeight, 7, 1, [[t.wh]]);
         paint(20, room2WallHeight, 7, 1, [[t.wh]]);
-        paint(18, room2WallHeight, 1, 1, [[t.openDl]]);
+        paint(18, room2WallHeight, 1, 1, [[t.openDr]]);
         paint(17, room2WallHeight, 1, 1, [[t.h3b]]);
         paint(19, room2WallHeight, 1, 1, [[t.wtl]]);
         paint(9, room2WallHeight, 1, 1, [[t.v3l]]);
@@ -283,7 +291,6 @@
             }
         }
 
-
         /**
          * BUILD AND START ALL LOGIC HERE
          */
@@ -298,27 +305,49 @@
             map[tile_y][tile_x] = new_tile_index;
         }
 
+        let isTipActive = null;
+        let interactionRecentlyClickerd = false;
+
         function checkInteractions() {
             const player = getPlayer();
-            if (!player) return;
+            const ePressed = !!pressedKeys[69];
 
-            const playerTileX = Math.floor((player.position_x + x) / 32);
-            const playerTileY = Math.floor((player.position_y + y) / 32);
+            isTipActive = null;
 
-            const tile = map[playerTileY][playerTileX];
-            console.log(`checkgin interacton at tile (${playerTileX}, ${playerTileY}), key: ${tile.id}, interactable: ${tile.interactable}`);
+            if (player) {
+                const startScreenX = canvas.width / 2 - scale / 2;
+                const startScreenY = canvas.height / 2 - scale / 2;
 
-            if (tile.interactable) {
-                console.log(`Player is on an interactable tile with id: ${tile.id}`);
+                // Sample the centre and feet of the visible 83px sprite
+                const playerScreenX = player.position_x - x + 83 / 2;
+                const playerScreenY = player.position_y + 83 - 8;
 
-                if (special_tiles_map[tile.id]) {
-                    console.log(special_tiles_map[tile.id].tooltip);
+                // Convert screen coordinates to integer map indices
+                const playerTileX = Math.floor(
+                    startTileX + (playerScreenX - startScreenX) / scale
+                );
 
-                    if (pressedKeys[69]) {
-                        special_tiles_map[tile.id].onInteract();
+                const playerTileY = Math.floor(
+                    startTileY + (playerScreenY - startScreenY - y) / scale
+                );
+
+                const tile = map[playerTileY]?.[playerTileX];
+
+                if (tile?.interactable) {
+                    const interaction = special_tiles_map[tile.id];
+                    if (interaction) {
+                        isTipActive = interaction.tooltip;
+                        if (ePressed && !interactionRecentlyClickerd) interaction.onInteract();
                     }
                 }
+
+                console.log(
+                    `Player at (${playerTileX}, ${playerTileY})`,
+                    tile
+                );
             }
+
+            interactionRecentlyClickerd = ePressed;
         }
 
         var myGameArea = {
@@ -427,7 +456,27 @@
             // console.log("X:", x, "Y:", y);
         }
 
-        function blitText(ctx, text, x, y, font = "16px Arial", color = "black") {
+        // Source - https://stackoverflow.com/a/46751621
+        // Posted by dave, modified by community. See post 'Timeline' for change history
+        // Retrieved 2026-10-25, License - CC BY-SA 4.0
+
+        var f = new FontFace('pixel', 'url(assets/PublicPixel-rv0pA.ttf)');
+
+        f.load().then(function(font) {
+
+            // Ready to use the font in a canvas context
+            console.log('font ready');
+
+            // Add font on the html page
+            document.fonts.add(font);
+
+            // ctx.font = '48px Font name';
+            // ctx.strokeText('Hello world', 100, 100);
+
+        });
+
+
+        function blitText(ctx, text, x, y, font = "pixel 16px", color = "black") {
             ctx.font = font;
             ctx.fillStyle = color;
             ctx.fillText(text, x, y);
@@ -699,6 +748,17 @@
 
             // Draw the HUD after the world so it stays fixed to the screen.
             drawScore();
+
+            if (isTipActive) {
+                blitText(
+                    myGameArea.context,
+                    isTipActive,
+                    canvas.width / 2 - 90,
+                    canvas.height - 40,
+                    "18px pixel",
+                    "white"
+                );
+            }
         }
 
         function everyinterval(n) {
