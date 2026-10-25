@@ -15,7 +15,7 @@
 
         canvas {
             border: 1px solid #d3d3d3;
-            background-color: #5881c0;
+            background-color: #0b6909;
 
             display: block;
             max-width: 100vw;
@@ -55,36 +55,6 @@
         // The start tile is drawn in the middle of the screen initially
 
 
-        const t = {
-            "b":       { "pos": 68,  "collidable": false, "interactable": false },
-            "b2":      { "pos": 69,  "collidable": false, "interactable": false },
-            "p1":      { "pos": 123, "collidable": false, "interactable": false },
-            "p2":      { "pos": 124, "collidable": false, "interactable": false },
-            "p3":      { "pos": 140, "collidable": false, "interactable": false },
-            "p4":      { "pos": 141, "collidable": false, "interactable": false },
-            "win11":   { "pos": 255, "collidable": true, "interactable": false },
-            "win12":   { "pos": 256, "collidable": true, "interactable": false },
-            "win13":   { "pos": 257, "collidable": true, "interactable": false },
-            "win14":   { "pos": 272, "collidable": true, "interactable": false },
-            "win15":   { "pos": 273, "collidable": true, "interactable": false },
-            "win16":   { "pos": 274, "collidable": true, "interactable": false },
-            "win21":   { "pos": 261, "collidable": true, "interactable": false },
-            "win22":   { "pos": 262, "collidable": true, "interactable": false },
-            "win23":   { "pos": 263, "collidable": true, "interactable": false },
-            "win24":   { "pos": 278, "collidable": true, "interactable": false },
-            "win25":   { "pos": 279, "collidable": true, "interactable": false },
-            "win26":   { "pos": 280, "collidable": true, "interactable": false },
-            "mat1":    { "pos": 126, "collidable": false, "interactable": false },
-            "mat2":    { "pos": 127, "collidable": false, "interactable": false },
-            "mat3":    { "pos": 128, "collidable": false, "interactable": false },
-            "cracked": { "pos": 139, "collidable": false, "interactable": false },
-            "slid":    { "pos": 120, "collidable": false, "interactable": false },
-            "blacc":   { "pos": 111, "collidable": false, "interactable": false },
-            "border":  { "pos": 18, "collidable": true,  "interactable": false },
-            "r1":     { "pos": 267, "collidable": false,  "interactable": false },
-            "r2":     { "pos": 268, "collidable": false,  "interactable": false },
-            "r3":     { "pos": 269, "collidable": false,  "interactable": false },
-        };
 
 
         const playerSpriteSheet = {
@@ -112,16 +82,42 @@
             }
         }
 
-        const startTileX = 17.5;
-        const startTileY = 4.5;
+        const startTileX = 18;
+        const startTileY = 25;
         
-        const WIDTH = 36;
-        const HEIGHT = 15;
+        const WIDTH = 37;
+        const HEIGHT = 160;
+
+        // Array of tiles
+        const t = {
+            "b1":       { "pos": 0,  "collidable": false, "interactable": false },
+            "b2":       { "pos": 1,  "collidable": false, "interactable": false },
+            "p1":       { "pos": 2,  "collidable": false, "interactable": false },
+            "p2":       { "pos": 3,  "collidable": false, "interactable": false },
+            "p3":       { "pos": 4,  "collidable": false, "interactable": false },
+            "r1":       { "pos": 5,  "collidable": false, "interactable": false },
+            "r2":       { "pos": 6,  "collidable": false, "interactable": false },
+            "wh":       { "pos": 7,  "collidable": true, "interactable": false },
+            "wbr":       { "pos": 8,  "collidable": true, "interactable": false },
+            "wbl":       { "pos": 12,  "collidable": true, "interactable": false },
+            "openDl":       { "pos": 9,  "collidable": false, "interactable": false },
+            "openDr":       { "pos": 10,  "collidable": false, "interactable": false },
+            "wv":       { "pos": 11,  "collidable": true, "interactable": false },
+            "v3l":       { "pos": 13,  "collidable": true, "interactable": false },
+            "v3r":       { "pos": 14,  "collidable": true, "interactable": false },
+            "wtl":       { "pos": 15,  "collidable": true, "interactable": false },
+            "wtr":       { "pos": 16,  "collidable": true, "interactable": false },
+            "h3b":       { "pos": 16,  "collidable": true, "interactable": false },
+            "h3t":       { "pos": 17,  "collidable": true, "interactable": false },
+            "w4":       { "pos": 18,  "collidable": true, "interactable": false },
+
+        
+        };
 
         // Initialise the map with background tiles
         const map = Array.from(
             { length: HEIGHT },
-            () => Array(WIDTH).fill(t.b)
+            () => Array(WIDTH).fill(t.b1)
         );
 
         // Paint a repeating pattern into a rectangular area
@@ -134,67 +130,40 @@
             }
         }
 
-
-        const patterns = {
-            floor: [[t.p1, t.p2]],
-
-            window_left_join: [
-                [t.win11],
-                [t.win14]
-            ],
-
-            window_centre_pane: [
-                [t.win12],
-                [t.win15]
-            ],
-
-            window_right_join: [
-                [t.win13],
-                [t.win16]
-            ],
-
-            window1: [
-                [t.win11, t.win12, t.win13],
-                [t.win14, t.win15, t.win16]
-            ],
-
-            window2: [
-                [t.win21, t.win22, t.win23],
-                [t.win24, t.win25, t.win26]
-            ],
-
-            road_marking: [
-                [t.r1, t.r2, t.r3],
-            ],
-
-            mat: [[t.mat1, t.mat2, t.mat3]],
-            border: [[t.border]]
-        };
-
-        // ---- COnstruct LEVEL ---- //
-
-        // bottom section:
-        paint(0, 14, 36, 1, patterns.border);
-        paint(0, 4, 36, 4, patterns.floor);
-        paint(0, 11, 36, 3, patterns.floor);
+        // ---- Construct LEVEL ---- //
 
 
-        // fake road
-        paint(0, 9, 3, 1, patterns.road_marking);
-        paint(7, 9, 3, 1, patterns.road_marking);
-        paint(14, 9, 3, 1, patterns.road_marking);
-        paint(21, 9, 3, 1, patterns.road_marking);
-        paint(28, 9, 3, 1, patterns.road_marking);
-        paint(35, 9, 1, 1, patterns.road_marking);
+        // Draw first/ bottom rooms walls
+        const room1WallHeight = 20;
+        paint(10, room1WallHeight + 1, 7, 1, [[t.wh]]);
+        paint(20, room1WallHeight + 1, 7, 1, [[t.wh]]);
+        paint(10, room1WallHeight, 16, 1, [[t.b1]]);
+        paint(27, room1WallHeight + 1, 1, 1, [[t.wbr]])
+        paint(9, room1WallHeight + 1, 1, 1, [[t.wbl]])
+        paint(17, room1WallHeight + 1, 1, 1, [[t.openDl]])
+        paint(19, room1WallHeight + 1, 1, 1, [[t.openDr]])
+        paint(9, room1WallHeight - 6, 1, 7, [[t.wv]])
+        paint(9, room1WallHeight - 7, 1, 1, [[t.v3l]])
+        paint(27, room1WallHeight - 6, 1, 7, [[t.wv]])
+        paint(27, room1WallHeight - 7, 1, 1, [[t.v3r]])
+        paint(10, room1WallHeight - 7, 7, 1, [[t.wh]])
+        paint(20, room1WallHeight - 7, 7, 1, [[t.wh]])
+        //Closed door - TODO: OPEN WHEN PUZZLE SOLVED
+        paint(17, room1WallHeight - 7, 1, 1, [[t.openDl]])
+        paint(19, room1WallHeight - 7, 1, 1, [[t.openDr]])
 
-        // First section, left and right hand windows
-        paint(0, 2, 14, 2, patterns.window_centre_pane);
-        paint(14, 2, 1, 2, patterns.window_right_join);
-        paint(20, 2, 1, 2, patterns.window_left_join);
-        paint(21, 2, 15, 2, patterns.window_centre_pane);
-        paint(16, 2, 3, 2, patterns.mat);
+        // Draw road
+        const roadHeight = room1WallHeight + 2;
+        paint(0, roadHeight, WIDTH, 1, [[t.p1]]);
+        paint(0, roadHeight + 1, WIDTH, 1, [[t.p1]]);
+        paint(0, roadHeight + 2, WIDTH, 1, [[t.p3]]);
+        paint(0, roadHeight + 3, WIDTH, 1, [[t.r1]]);
+        paint(0, roadHeight + 4, WIDTH, 1, [[t.r1, t.r2]]);
+        paint(0, roadHeight + 5, WIDTH, 1, [[t.r1]]);
+        paint(0, roadHeight + 6, WIDTH, 1, [[t.p2]]);
+        paint(0, roadHeight + 7, WIDTH, 4, [[t.p1]]);
 
-        // ---- END LEVEL CONSTRUCTION ---- //
+
 
         /**
          * BUILD AND START ALL LOGIC HERE
@@ -216,6 +185,15 @@
                 this.interval = setInterval(updateGameArea, 20);
                 this.canvas.width = window.innerWidth;
                 this.canvas.height = window.innerHeight;
+            
+            console.log({
+                internalWidth: this.canvas.width,
+                internalHeight: this.canvas.height,
+                displayedWidth: this.canvas.getBoundingClientRect().width,
+                displayedHeight: this.canvas.getBoundingClientRect().height,
+                devicePixelRatio: window.devicePixelRatio
+            });
+
             },
             clear: function () {
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -303,7 +281,7 @@
 
 
 
-        function drawSprite(sheet, spriteIndex, xD, yD, scale, size = 16, flipX = false) {
+        function drawSprite(sheet, spriteIndex, xD, yD, scale, size = 32, flipX = false) {
             const ctx = myGameArea.context;
             const columns = Math.floor(sheet.width / size);
 
@@ -314,6 +292,8 @@
 
             ctx.translate(xD + (flipX ? scale : 0), yD);
             ctx.scale(flipX ? -1 : 1, 1);
+
+            ctx.imageSmoothingEnabled = false;
 
             ctx.drawImage(
                 sheet,
@@ -329,7 +309,7 @@
 
         function background(width, height) {
             this.backSheet = new Image();
-            this.backSheet.src = "assets/neo_zero_tiles_and_buildings_01.png";
+            this.backSheet.src = "assets/custom.png";
             this.loaded = false;
             this.backSheet.onload = () => {
                 this.loaded = true;
@@ -337,6 +317,10 @@
 
             this.playerSpriteSheet = new Image();
             this.playerSpriteSheet.src = "assets/neo_zero_char_01.png";
+
+            this.security1SpriteSheet = new Image();
+            this.security1SpriteSheet.src = "assets/Security_1.png";
+
             this.loaded = false;
             this.playerSpriteSheet.onload = () => {
                 this.loaded = true;
@@ -353,9 +337,9 @@
                     for (let col = 0; col < map[row].length; col++) {
                         const spriteIndex = map[row][col].pos;
 
-                        const screenX = startScreenX + (col - startTileX) * scale;
-                        const screenY = startScreenY + (row - startTileY) * scale;
-
+                        const screenX = Math.round(startScreenX + (col - startTileX) * scale);
+                        const screenY = Math.round(startScreenY + (row - startTileY) * scale);
+                        
                         drawSprite(
                             this.backSheet,
                             spriteIndex,
@@ -398,34 +382,40 @@
                         walkingState,
                         entity.position_x - this.x,
                         entity.position_y,
-                        64,
+                        96,
                         32,
                         lastFrameMovementX > 0
                     );
                 } else if (entity.category === CharacterType.Enemy) {
-                    var fOffset = 9;
+                    var fOffset = 0;
                     var flipX = false;
                     if (entity.direction == "right") {
                         flipX = false;
-                        fOffset = 15;
+                        fOffset = 4;
                     }
                     if (entity.direction == "left") {
                         flipX = true;
-                        fOffset = 15;
+                        fOffset = 4;
                     }
                     if (entity.direction == "forward") {
-                        fOffset = 9;
+                        fOffset = 0;
                     }
                     if (entity.direction == "back") {
-                        fOffset = 12;
+                        fOffset = 8;
                     }
+
+                    var sheet = myBackground.security1SpriteSheet;
+                    // if (entity.colour === "1") {
+                    //     sheet = myBackground.security1SpriteSheet;
+                    // } // TODO: AND SO ON FOR OTHER VARIATIONS
+
                     console.log(entity.frame, fOffset, entity.frame + fOffset);
                     drawSprite(
-                        myBackground.playerSpriteSheet,
+                        sheet,
                         entity.frame + fOffset,
                         entity.position_x,
                         entity.position_y + this.y,
-                        64,
+                        96,
                         32,
                         flipX
                     );
@@ -578,7 +568,8 @@
             spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width - 30) / 2, (canvas.height - 30) / 2);
 
             // Create the other stuff
-            spawnEntity(CharacterType.Enemy, 50, 80, "red", 1, 1, false, 2, 1);
+            spawnEntity(CharacterType.Enemy, 50, 80, "1", 1, 1, false, 2, 1);
+            spawnEntity(CharacterType.Enemy, 50, 80, "1", 0, 2, false, 0, 3);
             // spawnEntity(CharacterType.Enemy, 50, 80, "red", position_x = 500, position_y = 500, patrol_x = 100, patrol_y = 100);
             // spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
