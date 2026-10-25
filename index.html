@@ -33,10 +33,46 @@
             -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
 
         }
+
+        #game-over {
+            align-items: center;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            display: none;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            inset: 0;
+            justify-content: center;
+            position: fixed;
+            text-align: center;
+            z-index: 10;
+        }
+
+        #game-over h1 {
+            margin: 0 0 16px;
+        }
+
+        #game-over p {
+            font-size: 24px;
+            margin: 8px 0;
+        }
+
+        #game-over button {
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 10px 24px;
+        }
     </style>
 </head>
 
 <body onload="startGame()">
+    <div id="game-over">
+        <h1>Game Over</h1>
+        <p id="final-score"></p>
+        <p>Thanks for playing!</p>
+        <button type="button" onclick="location.reload()">Restart</button>
+    </div>
 
     <script>
 
@@ -151,6 +187,13 @@
             "winning_switch":   { "pos": 1,  "collidable": false, "interactable": true, "id": "winning_switch" },
         };
 
+
+        function endGame() {
+            clearInterval(myGameArea.interval);
+            document.getElementById("final-score").textContent = `Score: ${score}`;
+            document.getElementById("game-over").style.display = "flex";
+        }
+
         // TODO: functions to do when interacting with the special tiles
         const special_tiles_map = {
             "laby_switch": {
@@ -165,7 +208,7 @@
                 "onInteract": function() {
                     // Do something when the winning switch is interacted with
                     swapTileOut(18, 2, t.r2_special);
-                    window.alert("You win!");
+                    endGame();
                 }
             }
         };  
@@ -638,6 +681,10 @@
                 score = Math.max(0, score - (damageTaken ? 30 : 1));
                 if (damageTaken) {
                     playerDamageFlashFrames = playerDamageFlashDuration;
+                }
+                if (score === 0) {
+                    endGame();
+                    return;
                 }
             }
 
