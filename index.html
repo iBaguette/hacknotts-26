@@ -387,8 +387,8 @@
             //     y += dy;
             // } else {
             //     dy = 0;
-            // } TODO: RONAN XXXXXXX TURN THIS BACK ON 
-            x += dx;
+            // } TODO: RONAN or OLIVER XXXXXXX TURN THIS BACK ON 
+            x += dx; // ALSO REMOVE THESE 2 LINES
             y += dy;
 
             lastFrameMovementX = dx / speed;
@@ -561,9 +561,9 @@
             // loops
             if (lastFrameMovementX == 0 && lastFrameMovementY == 0) {
                 count = 0;
-                (isFacingUp) ? walkingState = 8 : walkingState = 1;
+                (isFacingUp) ? walkingState = 8 : walkingState = 0;
             } else {
-                isFacingUp = false; 
+                isFacingUp = false;
                 if (lastFrameMovementY == 1) {
                     // from 3-5
                     walkingState = 8 + Math.floor(count / 5) % 4;
