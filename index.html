@@ -153,7 +153,7 @@
             }
         }
 
-        const startTileX = 17.5;
+        const startTileX = 18;
         const startTileY = 38; // 38: Start; 16: middle of labyrinth; 4: top room
 
         const WIDTH = 37;
@@ -291,6 +291,23 @@
 
 
         // construct first level
+
+        // Simple zigzag obstacles
+        paint(12, room1WallHeight - 2, 9, 1, [[t.wh]]);
+        paint(18, room1WallHeight - 4, 8, 1, [[t.wh]]);
+        paint(12, room1WallHeight - 6, 4, 1, [[t.wh]]);
+
+        // Open passage to second level (no door)
+        paint(17, room1WallHeight - 7, 3, 1, [[t.b1]]);
+
+        // Guard patrols (coordinates relative to starting tile)
+        const firstLevelGuards = [
+            // Patrol left to right near the bottom
+            [13, room1WallHeight - 3, 23, room1WallHeight - 3, "1"],
+
+            // Patrol left to right near the upper passage
+            [15, room1WallHeight - 5, 24, room1WallHeight - 5, "2"]
+        ];
 
 
         // ---- Construct LABYRINTH ---- //
@@ -823,7 +840,7 @@
         const tileCollisionVerticalOffset = 45;
         const tileCollisionVerticalTopOffset = 6;
         function checkMapCollision(entity, newX, newY) {
-            // return false;   // TODO REMOVE THIS LINE
+            return false;   // TODO REMOVE THIS LINE
             for (let row = 0; row < map.length; row++) {
                 for (let col = 0; col < map[row].length; col++) {
 
