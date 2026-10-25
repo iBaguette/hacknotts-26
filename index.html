@@ -55,6 +55,37 @@
         // The start tile is drawn in the middle of the screen initially
 
 
+        const t = {
+            "b":       { "pos": 68,  "collidable": false, "interactable": false },
+            "b2":      { "pos": 69,  "collidable": false, "interactable": false },
+            "p1":      { "pos": 123, "collidable": false, "interactable": false },
+            "p2":      { "pos": 124, "collidable": false, "interactable": false },
+            "p3":      { "pos": 140, "collidable": false, "interactable": false },
+            "p4":      { "pos": 141, "collidable": false, "interactable": false },
+            "win11":   { "pos": 255, "collidable": true, "interactable": false },
+            "win12":   { "pos": 256, "collidable": true, "interactable": false },
+            "win13":   { "pos": 257, "collidable": true, "interactable": false },
+            "win14":   { "pos": 272, "collidable": true, "interactable": false },
+            "win15":   { "pos": 273, "collidable": true, "interactable": false },
+            "win16":   { "pos": 274, "collidable": true, "interactable": false },
+            "win21":   { "pos": 261, "collidable": true, "interactable": false },
+            "win22":   { "pos": 262, "collidable": true, "interactable": false },
+            "win23":   { "pos": 263, "collidable": true, "interactable": false },
+            "win24":   { "pos": 278, "collidable": true, "interactable": false },
+            "win25":   { "pos": 279, "collidable": true, "interactable": false },
+            "win26":   { "pos": 280, "collidable": true, "interactable": false },
+            "mat1":    { "pos": 126, "collidable": false, "interactable": false },
+            "mat2":    { "pos": 127, "collidable": false, "interactable": false },
+            "mat3":    { "pos": 128, "collidable": false, "interactable": false },
+            "cracked": { "pos": 139, "collidable": false, "interactable": false },
+            "slid":    { "pos": 120, "collidable": false, "interactable": false },
+            "blacc":   { "pos": 111, "collidable": false, "interactable": false },
+            "border":  { "pos": 18, "collidable": true,  "interactable": false },
+            "r1":     { "pos": 267, "collidable": false,  "interactable": false },
+            "r2":     { "pos": 268, "collidable": false,  "interactable": false },
+            "r3":     { "pos": 269, "collidable": false,  "interactable": false },
+            "oob":     { "pos": 322,   "collidable": true,  "interactable": false }
+        };
 
 
         const playerSpriteSheet = {
@@ -279,6 +310,11 @@
             // console.log("X:", x, "Y:", y);
         }
 
+        function blitText(ctx, text, x, y, font = "16px Arial", color = "black") {
+            ctx.font = font;
+            ctx.fillStyle = color;
+            ctx.fillText(text, x, y);
+        }
 
 
         function drawSprite(sheet, spriteIndex, xD, yD, scale, size = 32, flipX = false) {
@@ -483,9 +519,9 @@
                     }
                 }
             }
-
             return false;
         }
+        
 
         // Manage all characters/entities in the world rn
         /**
@@ -500,7 +536,8 @@
         }
 
         var current_entity_id = 0;
-        function spawnEntity(category = CharacterType.Item, size_x, size_y, colour = "red", position_x, position_y, collidable = true, patrol_x = 0, patrol_y = 0) {
+
+        function spawnEntity(category = CharacterType.Item, size_x, size_y, colour = "red", position_x, position_y, collidable = true, patrol_x = 0, patrol_y = 0, interactable = false, interactableText = "") {
             // Player must be singleton
             if (category === CharacterType.Player) {
                 if (player_piece !== undefined) {
@@ -541,7 +578,9 @@
                 collidable: collidable,
                 frame: 0,
                 counter: 0,
-                direction: "left"
+                direction: "left",
+                interactable: interactable,
+                interactableText: interactableText
             };
 
             entities.push(constructed_character);
