@@ -4,6 +4,11 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
+        @font-face {
+            font-family: pixel;
+            src: url("assets/PublicPixel-rv0pA.ttf") format("truetype");
+        }
+
         body,
         html {
             margin: 0;
@@ -40,7 +45,7 @@
             color: white;
             display: none;
             flex-direction: column;
-            font-family: Arial, sans-serif;
+            font-family: pixel, sans-serif;
             inset: 0;
             justify-content: center;
             position: fixed;
@@ -519,7 +524,7 @@
         });
 
 
-        function blitText(ctx, text, x, y, font = "pixel 16px", color = "black") {
+        function blitText(ctx, text, x, y, font = "16px pixel", color = "black") {
             ctx.font = font;
             ctx.fillStyle = color;
             ctx.fillText(text, x, y);
@@ -528,7 +533,7 @@
         function drawScore() {
             const text = `Score: ${score}`;
             const ctx = myGameArea.context;
-            ctx.font = "bold 24px Arial";
+            ctx.font = "bold 24px pixel";
 
             blitText(
                 ctx,
@@ -676,6 +681,17 @@
             const playerInsideEnemyHazard = entities.some(
                 entity => entity.category === CharacterType.Enemy && isPlayerInsideEnemyHazard(entity)
             );
+            handleInput();
+            if (lastFrameMovementY > 0) {
+                playerFacing = "up";
+            } else if (lastFrameMovementY < 0) {
+                playerFacing = "down";
+            } else if (lastFrameMovementX > 0) {
+                playerFacing = "right";
+            } else if (lastFrameMovementX < 0) {
+                playerFacing = "left";
+            }
+
             if (myGameArea.frameNo % 50 === 0) {
                 const damageTaken = playerInsideEnemyHazard;
                 score = Math.max(0, score - (damageTaken ? 30 : 1));
@@ -781,17 +797,6 @@
                 }
             }
             count += 1;
-
-            handleInput();
-            if (lastFrameMovementY > 0) {
-                playerFacing = "up";
-            } else if (lastFrameMovementY < 0) {
-                playerFacing = "down";
-            } else if (lastFrameMovementX > 0) {
-                playerFacing = "right";
-            } else if (lastFrameMovementX < 0) {
-                playerFacing = "left";
-            }
 
             // Draw the HUD after the world so it stays fixed to the screen.
             drawScore();
