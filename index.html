@@ -113,8 +113,8 @@
             }
         }
 
-        const startTileX = 18;
-        const startTileY = 38; // 38: Start; 16: middle of labyrinth; 4: top room
+        const startTileX = 12;
+        const startTileY = 24; // 38: Start; 16: middle of labyrinth; 4: top room
 
         const WIDTH = 37;
         const HEIGHT = 160;
@@ -140,10 +140,22 @@
             "wtr":       { "pos": 16,  "collidable": true, "interactable": false },
             "h3b":       { "pos": 16,  "collidable": true, "interactable": false },
             "h3t":       { "pos": 17,  "collidable": true, "interactable": false },
-            "w4":       { "pos": 18,  "collidable": true, "interactable": false },
+            "w4":           { "pos": 18,  "collidable": true, "interactable": false },
 
-        
+            // TODO: SPecial interactible tiles
+            "r1_special":   { "pos": 5,  "collidable": false, "interactable": true },
         };
+
+        // TODO: functions to do when interacting with the special tiles
+        const special_tiles_map = {
+            "r1_special": {
+                "tooltip": "Press E to interact",
+                "onInteract": function() {
+                    window.alert("You have interacted with the r1_special!");
+                }
+            
+            }
+        };  
 
         // Initialise the map with background tiles
         const map = Array.from(
@@ -213,6 +225,9 @@
         paint(0, roadHeight + 5, WIDTH, 1, [[t.r1]]);
         paint(0, roadHeight + 6, WIDTH, 1, [[t.p2]]);
         paint(0, roadHeight + 7, WIDTH, 4, [[t.p1]]);
+
+        // TODO: Labyrinth interactive buttons, switch
+        paint(10, room1WallHeight - 8, 1, 1, [[t.r1_special]]);
 
 
         // ---- Construct LABYRINTH ---- //
