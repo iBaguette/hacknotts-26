@@ -42,9 +42,13 @@
 
         var player_piece;
         var entities = [];
-        var myScore;
+        var score = 300;
+        const enemyHazardRadius = 64;
+        const enemySpriteSize = 96;
+        const playerSpriteSize = 83;
+        const playerDamageFlashDuration = 10;
 
-        var x = 32;
+        var x = 0;
         var y = 0;
         const direction_to_move = 1;
         const speed = 3;
@@ -403,6 +407,48 @@
             ctx.fillText(text, x, y);
         }
 
+        function drawScore() {
+            const text = `Score: ${score}`;
+            const ctx = myGameArea.context;
+            ctx.font = "bold 24px Arial";
+
+            blitText(
+                ctx,
+                text,
+                (myGameArea.canvas.width - ctx.measureText(text).width) / 2,
+                40,
+                "bold 24px Arial",
+                "white"
+            );
+        }
+
+        function isPlayerInsideEnemyHazard(enemy) {
+            const player = getPlayer();
+            if (!player) return false;
+
+            const playerFeetX = player.position_x - x + playerSpriteSize / 2;
+            const playerFeetY = player.position_y + playerSpriteSize;
+            const enemyFeetX = enemy.position_x + enemySpriteSize / 2;
+            const enemyFeetY = enemy.position_y + y + enemySpriteSize;
+            const distanceX = playerFeetX - enemyFeetX;
+            const distanceY = playerFeetY - enemyFeetY;
+
+            return Math.hypot(distanceX, distanceY) <= enemyHazardRadius;
+        }
+
+        function drawEnemyHazard(enemy) {
+            const ctx = myGameArea.context;
+            const feetX = enemy.position_x + enemySpriteSize / 2;
+            const feetY = enemy.position_y + y + enemySpriteSize;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(feetX, feetY, enemyHazardRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
+            ctx.fill();
+            ctx.restore();
+        }
+
 
         function drawSprite(sheet, spriteIndex, xD, yD, scale, size = 32, flipX = false) {
             const ctx = myGameArea.context;
@@ -492,9 +538,16 @@
         walkingState = 0;
         count = 0;
         isFacingUp = false;
+        let playerFacing = "down";
+        let playerDamageFlashFrames = 0;
 
         function updateGameArea() {
             var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+
+            myGameArea.frameNo += 1;
+            if (playerDamageFlashFrames > 0) {
+                playerDamageFlashFrames -= 1;
+            }
 
             myGameArea.clear();
 
@@ -502,16 +555,37 @@
 
             myBackground.draw();
 
+            const playerInsideEnemyHazard = entities.some(
+                entity => entity.category === CharacterType.Enemy && isPlayerInsideEnemyHazard(entity)
+            );
+            if (myGameArea.frameNo % 50 === 0) {
+                const damageTaken = playerInsideEnemyHazard;
+                score = Math.max(0, score - (damageTaken ? 30 : 1));
+                if (damageTaken) {
+                    playerDamageFlashFrames = playerDamageFlashDuration;
+                }
+            }
+
             for (const entity of entities) {
                 if (entity.category === CharacterType.Player) {
+                    const isFlashing = playerDamageFlashFrames > 0;
+                    const damageSprite = {
+                        down: 12,
+                        left: 13,
+                        up: 14,
+                        right: 13
+                    };
+
                     drawSprite(
                         myBackground.playerSpriteSheet,
-                        walkingState,
+                        isFlashing ? damageSprite[playerFacing] : walkingState,
                         entity.position_x - this.x,
                         entity.position_y,
-                        83,
+                        playerSpriteSize,
                         32,
-                        lastFrameMovementX > 0
+                        isFlashing
+                            ? playerFacing === "right"
+                            : lastFrameMovementX > 0
                     );
                 } else if (entity.category === CharacterType.Enemy) {
                     var fOffset = 0;
@@ -539,17 +613,20 @@
                         sheet = myBackground.security0SpriteSheet;
                     }
 
+                    drawEnemyHazard(entity);
+
                     console.log(entity.frame, fOffset, entity.frame + fOffset);
                     drawSprite(
                         sheet,
-                        entity.frame + fOffset,
+                        playerInsideEnemyHazard && isPlayerInsideEnemyHazard(entity)
+                            ? 12
+                            : entity.frame + fOffset,
                         entity.position_x,
                         entity.position_y + this.y,
-                        96,
+                            enemySpriteSize,
                         32,
                         flipX
                     );
-
 
                 }
                 
@@ -582,6 +659,18 @@
             count += 1;
 
             handleInput();
+            if (lastFrameMovementY > 0) {
+                playerFacing = "up";
+            } else if (lastFrameMovementY < 0) {
+                playerFacing = "down";
+            } else if (lastFrameMovementX > 0) {
+                playerFacing = "right";
+            } else if (lastFrameMovementX < 0) {
+                playerFacing = "left";
+            }
+
+            // Draw the HUD after the world so it stays fixed to the screen.
+            drawScore();
         }
 
         function everyinterval(n) {
@@ -717,6 +806,12 @@
         function doEntityMovementCalcs() {
             for (const entity of entities) {
                 if (entity.category === CharacterType.Enemy) {
+                    if (isPlayerInsideEnemyHazard(entity)) {
+                        entity.frame = 0;
+                        entity.counter = 0;
+                        continue;
+                    }
+
                     // Difference between current position and target
                     const cX = entity.position_x - entity.patrol_x;
                     const cY = entity.position_y - entity.patrol_y;
