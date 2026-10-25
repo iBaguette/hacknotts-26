@@ -15,7 +15,7 @@
 
         canvas {
             border: 1px solid #d3d3d3;
-            background-color: #0b6909;
+            background-color: #464646;
 
             display: block;
             max-width: 100vw;
@@ -44,7 +44,7 @@
         var entities = [];
         var myScore;
 
-        var x = 0;
+        var x = 32;
         var y = 0;
         const direction_to_move = 1;
         const speed = 3;
@@ -114,8 +114,8 @@
         }
 
         const startTileX = 18;
-        const startTileY = 25;
-        
+        const startTileY = 0; // 23?
+
         const WIDTH = 37;
         const HEIGHT = 160;
 
@@ -164,8 +164,27 @@
         // ---- Construct LEVEL ---- //
 
 
+        // Draw third rooms walls
+        const room3WallHeight = 0;
+        paint(10, room3WallHeight, 17, 1, [[t.wh]]);
+        paint(9, room3WallHeight, 1, 1, [[t.wtl]]);
+        paint(27, room3WallHeight, 1, 1, [[t.wtr]]);
+        paint(9, room3WallHeight + 1, 1, 7, [[t.wv]]);
+        paint(27, room3WallHeight + 1, 1, 7, [[t.wv]]);
+
+        // Draw second rooms walls (excluding maze)
+        const room2WallHeight = room3WallHeight + 8;
+        paint(10, room2WallHeight, 7, 1, [[t.wh]]);
+        paint(20, room2WallHeight, 7, 1, [[t.wh]]);
+        paint(17, room2WallHeight, 1, 1, [[t.openDl]])
+        paint(19, room2WallHeight, 1, 1, [[t.openDr]])
+        paint(9, room2WallHeight, 1, 1, [[t.v3l]]);
+        paint(27, room2WallHeight, 1, 1, [[t.v3r]]);
+        paint(9, room2WallHeight + 1, 1, 7, [[t.wv]]);
+        paint(27, room2WallHeight + 1, 1, 7, [[t.wv]]);
+
         // Draw first/ bottom rooms walls
-        const room1WallHeight = 20;
+        const room1WallHeight = room2WallHeight + 15;
         paint(10, room1WallHeight + 1, 7, 1, [[t.wh]]);
         paint(20, room1WallHeight + 1, 7, 1, [[t.wh]]);
         paint(10, room1WallHeight, 16, 1, [[t.b1]]);
@@ -179,7 +198,7 @@
         paint(27, room1WallHeight - 7, 1, 1, [[t.v3r]])
         paint(10, room1WallHeight - 7, 7, 1, [[t.wh]])
         paint(20, room1WallHeight - 7, 7, 1, [[t.wh]])
-        //Closed door - TODO: OPEN WHEN PUZZLE SOLVED
+        //Closed door - TODO: OPEN WHEN PUZZLE SOLVED, ALSO MAKE A CLOSED DOOR LOL
         paint(17, room1WallHeight - 7, 1, 1, [[t.openDl]])
         paint(19, room1WallHeight - 7, 1, 1, [[t.openDr]])
 
