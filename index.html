@@ -113,8 +113,8 @@
             }
         }
 
-        const startTileX = 12;
-        const startTileY = 24; // 38: Start; 16: middle of labyrinth; 4: top room
+        const startTileX = 17.5;
+        const startTileY = 38; // 38: Start; 16: middle of labyrinth; 4: top room
 
         const WIDTH = 37;
         const HEIGHT = 160;
@@ -184,6 +184,10 @@
         paint(27, room3WallHeight, 1, 1, [[t.wtr]]);
         paint(9, room3WallHeight + 1, 1, 9, [[t.wv]]);
         paint(27, room3WallHeight + 1, 1, 9, [[t.wv]]);
+
+        // Winning switch
+        paint(18, room3WallHeight + 2, 1, 1, [[t.r1_special]]);
+
 
         const room2WallHeight = room3WallHeight + 10;
         paint(10, room2WallHeight, 7, 1, [[t.wh]]);
@@ -363,27 +367,29 @@
             let dx = Math.abs(horizontal) > deadzone ? horizontal * speed : 0;
             let dy = Math.abs(vertical) > deadzone ? vertical * speed : 0;
 
-            // horizoatal
-            if (dx !== 0 && !checkMapCollision(
-                entity,
-                entity.position_x - (x + dx),
-                entity.position_y - y
-            )) {
-                x += dx;
-            } else {
-                dx = 0;
-            }
+            // // horizoatal
+            // if (dx !== 0 && !checkMapCollision(
+            //     entity,
+            //     entity.position_x - (x + dx),
+            //     entity.position_y - y
+            // )) {
+            //     x += dx;
+            // } else {
+            //     dx = 0;
+            // }
 
-            // vertical
-            if (dy !== 0 && !checkMapCollision(
-                entity,
-                entity.position_x - x,
-                entity.position_y - (y + dy)
-            )) {
-                y += dy;
-            } else {
-                dy = 0;
-            }
+            // // vertical
+            // if (dy !== 0 && !checkMapCollision(
+            //     entity,
+            //     entity.position_x - x,
+            //     entity.position_y - (y + dy)
+            // )) {
+            //     y += dy;
+            // } else {
+            //     dy = 0;
+            // } TODO: RONAN XXXXXXX TURN THIS BACK ON 
+            x += dx;
+            y += dy;
 
             lastFrameMovementX = dx / speed;
             lastFrameMovementY = dy / speed;
@@ -697,11 +703,14 @@
             // spawnEntity(CharacterType.Player, 30, 30, "green", (canvas.width - 30) / 2, (canvas.height - 30) / 2);
 
             // Create the other stuff
-            spawnEntity(CharacterType.Enemy, 50, 80, "1", 1, 1, false, 2, 1);
-            spawnEntity(CharacterType.Enemy, 50, 80, "2", 0, 2, false, 0, 3);
-            spawnEntity(CharacterType.Enemy, 50, 80, "0", -1, 1, false, -2, 1);
-            // spawnEntity(CharacterType.Enemy, 50, 80, "red", position_x = 500, position_y = 500, patrol_x = 100, patrol_y = 100);
-            // spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
+            const yOffset = -34;
+            spawnEntity(CharacterType.Enemy, 50, 80, "1", -5, 3 + yOffset, false, 5, 4 + yOffset);
+            spawnEntity(CharacterType.Enemy, 50, 80, "2", -5, 0 + yOffset, false, 5, 0 + yOffset);
+            spawnEntity(CharacterType.Enemy, 50, 80, "0", -5, -4 + yOffset, false, 5, -4 + yOffset);
+            spawnEntity(CharacterType.Enemy, 50, 80, "0", 3, -4 + yOffset, false, 3, 4 + yOffset);
+            spawnEntity(CharacterType.Enemy, 50, 80, "2", -3, -4 + yOffset, false, -3, 4 + yOffset);
+            spawnEntity(CharacterType.Enemy, 50, 80, "2", -6, 4 + yOffset, false, -6, -4 + yOffset);
+            spawnEntity(CharacterType.Enemy, 50, 80, "0", 6, 4 + yOffset, false, 6, -4 + yOffset);
         }
 
 
