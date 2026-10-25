@@ -55,37 +55,37 @@
         // The start tile is drawn in the middle of the screen initially
 
 
-        const t = {
-            "b":       { "pos": 68,  "collidable": false, "interactable": false },
-            "b2":      { "pos": 69,  "collidable": false, "interactable": false },
-            "p1":      { "pos": 123, "collidable": false, "interactable": false },
-            "p2":      { "pos": 124, "collidable": false, "interactable": false },
-            "p3":      { "pos": 140, "collidable": false, "interactable": false },
-            "p4":      { "pos": 141, "collidable": false, "interactable": false },
-            "win11":   { "pos": 255, "collidable": true, "interactable": false },
-            "win12":   { "pos": 256, "collidable": true, "interactable": false },
-            "win13":   { "pos": 257, "collidable": true, "interactable": false },
-            "win14":   { "pos": 272, "collidable": true, "interactable": false },
-            "win15":   { "pos": 273, "collidable": true, "interactable": false },
-            "win16":   { "pos": 274, "collidable": true, "interactable": false },
-            "win21":   { "pos": 261, "collidable": true, "interactable": false },
-            "win22":   { "pos": 262, "collidable": true, "interactable": false },
-            "win23":   { "pos": 263, "collidable": true, "interactable": false },
-            "win24":   { "pos": 278, "collidable": true, "interactable": false },
-            "win25":   { "pos": 279, "collidable": true, "interactable": false },
-            "win26":   { "pos": 280, "collidable": true, "interactable": false },
-            "mat1":    { "pos": 126, "collidable": false, "interactable": false },
-            "mat2":    { "pos": 127, "collidable": false, "interactable": false },
-            "mat3":    { "pos": 128, "collidable": false, "interactable": false },
-            "cracked": { "pos": 139, "collidable": false, "interactable": false },
-            "slid":    { "pos": 120, "collidable": false, "interactable": false },
-            "blacc":   { "pos": 111, "collidable": false, "interactable": false },
-            "border":  { "pos": 18, "collidable": true,  "interactable": false },
-            "r1":     { "pos": 267, "collidable": false,  "interactable": false },
-            "r2":     { "pos": 268, "collidable": false,  "interactable": false },
-            "r3":     { "pos": 269, "collidable": false,  "interactable": false },
-            "oob":     { "pos": 322,   "collidable": true,  "interactable": false }
-        };
+        // const t = {
+        //     "b":       { "pos": 68,  "collidable": false, "interactable": false },
+        //     "b2":      { "pos": 69,  "collidable": false, "interactable": false },
+        //     "p1":      { "pos": 123, "collidable": false, "interactable": false },
+        //     "p2":      { "pos": 124, "collidable": false, "interactable": false },
+        //     "p3":      { "pos": 140, "collidable": false, "interactable": false },
+        //     "p4":      { "pos": 141, "collidable": false, "interactable": false },
+        //     "win11":   { "pos": 255, "collidable": true, "interactable": false },
+        //     "win12":   { "pos": 256, "collidable": true, "interactable": false },
+        //     "win13":   { "pos": 257, "collidable": true, "interactable": false },
+        //     "win14":   { "pos": 272, "collidable": true, "interactable": false },
+        //     "win15":   { "pos": 273, "collidable": true, "interactable": false },
+        //     "win16":   { "pos": 274, "collidable": true, "interactable": false },
+        //     "win21":   { "pos": 261, "collidable": true, "interactable": false },
+        //     "win22":   { "pos": 262, "collidable": true, "interactable": false },
+        //     "win23":   { "pos": 263, "collidable": true, "interactable": false },
+        //     "win24":   { "pos": 278, "collidable": true, "interactable": false },
+        //     "win25":   { "pos": 279, "collidable": true, "interactable": false },
+        //     "win26":   { "pos": 280, "collidable": true, "interactable": false },
+        //     "mat1":    { "pos": 126, "collidable": false, "interactable": false },
+        //     "mat2":    { "pos": 127, "collidable": false, "interactable": false },
+        //     "mat3":    { "pos": 128, "collidable": false, "interactable": false },
+        //     "cracked": { "pos": 139, "collidable": false, "interactable": false },
+        //     "slid":    { "pos": 120, "collidable": false, "interactable": false },
+        //     "blacc":   { "pos": 111, "collidable": false, "interactable": false },
+        //     "border":  { "pos": 18, "collidable": true,  "interactable": false },
+        //     "r1":     { "pos": 267, "collidable": false,  "interactable": false },
+        //     "r2":     { "pos": 268, "collidable": false,  "interactable": false },
+        //     "r3":     { "pos": 269, "collidable": false,  "interactable": false },
+        //     "oob":     { "pos": 322,   "collidable": true,  "interactable": false }
+        // };
 
 
         const playerSpriteSheet = {
@@ -498,22 +498,23 @@
         /**
          * if the new position calc'd would collide with something that shouldnt be collided with,
          */
-        const tileCollisionVerticalOffset = 0;
+        const tileCollisionVerticalOffset = 45;
+        const tileCollisionVerticalTopOffset = 6;
         function checkMapCollision(entity, newX, newY) {
             for (let row = 0; row < map.length; row++) {
                 for (let col = 0; col < map[row].length; col++) {
 
                     if (!map[row][col].collidable) continue;
 
-                    const tileX = canvas.width / 2 - scale / 2 + (col - startTileX) * scale;
+                    const tileX = canvas.width / 2 - scale + (col - startTileX) * scale;
 
-                    const tileY = canvas.height / 2 - scale / 2 + (row - startTileY - tileCollisionVerticalOffset) * scale;
+                    const tileY = canvas.height / 2 - scale / 2 + (row - startTileY) * scale - tileCollisionVerticalOffset;
 
                     if (
                         newX < tileX + scale &&
                         newX + entity.size_x > tileX &&
                         newY < tileY + scale &&
-                        newY + entity.size_y > tileY
+                        newY + entity.size_y > tileY - tileCollisionVerticalTopOffset
                     ) {
                         return true;
                     }
