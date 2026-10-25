@@ -371,7 +371,7 @@
             }
 
             this.playerSpriteSheet = new Image();
-            this.playerSpriteSheet.src = "assets/neo_zero_char_01.png";
+            this.playerSpriteSheet.src = "assets/player.png";
 
             this.security0SpriteSheet = new Image();
             this.security0SpriteSheet.src = "assets/Security_0.png";
@@ -493,22 +493,22 @@
             // loops
             if (lastFrameMovementX == 0 && lastFrameMovementY == 0) {
                 count = 0;
-                (isFacingUp) ? walkingState = 4 : walkingState = 1;
+                (isFacingUp) ? walkingState = 8 : walkingState = 1;
             } else {
                 isFacingUp = false; 
                 if (lastFrameMovementY == 1) {
                     // from 3-5
-                    walkingState = 3 + Math.floor(count / 5) % 3;
+                    walkingState = 8 + Math.floor(count / 5) % 4;
                     isFacingUp = true;
                 } else if (lastFrameMovementY == -1) {
                     // from 0-2
-                    walkingState = Math.floor(count / 5) % 3;
+                    walkingState = Math.floor(count / 5) % 4;
                 } else if (lastFrameMovementX == 1) {
                     // from 6-8
-                    walkingState = 6 + Math.floor(count / 5) % 3;
+                    walkingState = 4 + Math.floor(count / 5) % 4;
                 } else if (lastFrameMovementX == -1) {
                     // from 6-8
-                    walkingState = 6 + Math.floor(count / 5) % 3;
+                    walkingState = 4 + Math.floor(count / 5) % 4;
                 }
             }
             count += 1;
