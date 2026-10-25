@@ -354,8 +354,12 @@
             this.playerSpriteSheet = new Image();
             this.playerSpriteSheet.src = "assets/neo_zero_char_01.png";
 
+            this.security0SpriteSheet = new Image();
+            this.security0SpriteSheet.src = "assets/Security_0.png";
             this.security1SpriteSheet = new Image();
             this.security1SpriteSheet.src = "assets/Security_1.png";
+            this.security2SpriteSheet = new Image();
+            this.security2SpriteSheet.src = "assets/Security_2.png";
 
             this.loaded = false;
             this.playerSpriteSheet.onload = () => {
@@ -441,9 +445,12 @@
                     }
 
                     var sheet = myBackground.security1SpriteSheet;
-                    // if (entity.colour === "1") {
-                    //     sheet = myBackground.security1SpriteSheet;
-                    // } // TODO: AND SO ON FOR OTHER VARIATIONS
+                    if (entity.colour === "2") {
+                        sheet = myBackground.security2SpriteSheet;
+                    } 
+                    if (entity.colour === "0") {
+                        sheet = myBackground.security0SpriteSheet;
+                    }
 
                     console.log(entity.frame, fOffset, entity.frame + fOffset);
                     drawSprite(
@@ -609,7 +616,8 @@
 
             // Create the other stuff
             spawnEntity(CharacterType.Enemy, 50, 80, "1", 1, 1, false, 2, 1);
-            spawnEntity(CharacterType.Enemy, 50, 80, "1", 0, 2, false, 0, 3);
+            spawnEntity(CharacterType.Enemy, 50, 80, "2", 0, 2, false, 0, 3);
+            spawnEntity(CharacterType.Enemy, 50, 80, "0", -1, 1, false, -2, 1);
             // spawnEntity(CharacterType.Enemy, 50, 80, "red", position_x = 500, position_y = 500, patrol_x = 100, patrol_y = 100);
             // spawnEntity(CharacterType.Enemy, 20, 20, "red", 500, 750);
         }
